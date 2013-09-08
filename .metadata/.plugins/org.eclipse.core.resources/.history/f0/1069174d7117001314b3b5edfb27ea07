@@ -1,0 +1,211 @@
+<?php
+require_once("../_config/_config.php");
+
+if ( !$sessionManager-> isLoggedIn(true) ){
+	Util::redirect("/");
+}
+
+extract($_GET);
+
+$postMediaDAO = new PostMediaDAO();
+$categoryDAO = new CategoryDAO();
+$categories = $categoryDAO->getAllToMenu();
+
+$postDAO = new PostDAO();
+
+$add_or_change_image = false;
+
+if ( isset($_POST['title_inner'],$_POST['post_id']) ){
+	
+	$postEdit = $postDAO->get($_POST['post_id']);
+	
+	if ( $postEdit == null || ($postEdit->user_id != $_COOKIE['uid'] && !$sessionManager->isAdmin() )){
+		Util::redirect("/");
+	}
+	
+	$postEdit->title_general = trim($_POST['title_general']);
+	$postEdit->title_inner = trim($_POST['title_inner']);
+	$postEdit->post_text = strip_tags(trim($_POST['post_text']), '<br><b><i><strike><u><li><ul><ol><blockquote><a>');
+	//$postEdit->user_id = $_COOKIE['uid'];
+	$postEdit->summary_general = trim($_POST['summary_general']);
+	$postEdit->summary_inner = trim($_POST['summary_inner']);
+	$postEdit->category_id = $_POST['category'];
+	
+	$postEdit->city = trim($_POST['city']);
+	$postEdit->region = trim($_POST['region']);
+	$postEdit->country = trim($_POST['country']);
+	$postEdit->source = $_POST['source'];
+	
+	if ( $afterpost != 0 ){
+		$postEdit->activated = 1;
+	}
+	else{
+		$postEdit->updated_date = date('y-m-d H:i:s');
+	}
+	
+	if ( isset($_POST['remove_image']) ) {
+		if ( $postEdit->main_media != null ){
+			@unlink(Util::createImagePath($postEdit->main_media->media_name).$postEdit->main_media->media_name);
+			$postMediaDAO->deleteById($postEdit->main_media->post_media_id);
+			$postEdit->main_media = null;
+		}
+	}
+	
+	if (isset($_FILES['image']) && trim($_FILES['image']['name']) != ''){
+		$add_or_change_image = true;
+		if ( $postEdit->main_media != null && trim($postEdit->main_media->media_name) != '' ){
+			@unlink(Util::createImagePath($postEdit->main_media->media_name).$postEdit->main_media->media_name);
+			$postMediaDAO->deleteById($postEdit->main_media->post_media_id);
+		}
+		
+		$extensionArray = explode('.', $_FILES['image']['name']);
+		$extension = $extensionArray[sizeof($extensionArray)-1];
+		
+		$imageName = sha1($_FILES['image']['name'] . rand(0,50000) . date('YmdHis')) . '.' . $extension;
+		$imagePath = Util::createImagePath($imageName);
+		//if ( mkdir($imagePath, 0777, true) ){
+			if ( copy($_FILES['image']['tmp_name'], $imagePath.$imageName) ){
+				$size = getimagesize($imagePath.$imageName);
+				$originalHeight = $size[1];
+				$newHeight = Imagem::getAltura($imagePath.$imageName, 500);
+				$resizeImageResult = Imagem::geraMiniatura($imagePath.$imageName,500,$newHeight);
+				if ( $resizeImageResult != null ){
+					$postMedia = new PostMedia();
+					$postMedia->media_name = $imageName;
+					$postMedia->type = $postMedia->TYPE_IMAGE;
+					$postMedia->date_post = date('Y/m/d H:i:s');
+					$postMedia->post_id = $post_id;
+					$postMediaDAO->create($postMedia);
+				}
+			}
+		//}
+	}
+	
+	if ( $postEdit->main_media != null && $afterpost != 0){		
+		extract($_POST); // Extract the $x1, $y1, $w, $h, $extension, 
+		//$filename, $width, $height variables
+		 
+		//Now lets create the thumbnail
+	 
+	    // GD Function List
+	    $gdExtensions = array (
+		    'jpg'=>'JPEG',
+    		'jpeg'=>'JPEG',
+		    'gif'=>'GIF',
+		    'bmp'=>'WBMP',
+		    'png'=>'PNG'
+	    );
+	    $thumbWidth = 400;
+	    $thumbHeight = 300;
+	    $newFilename = $filename = Util::createImagePath($postEdit->main_media->media_name).$postEdit->main_media->media_name;
+	    $extensionArray = explode('.', $postEdit->main_media->media_name);
+	    $extension = $extensionArray[sizeof($extensionArray)-1];
+	    $check = false;
+	 
+	    $gdExtension = $gdExtensions[$extension];
+	    $function_to_read = "ImageCreateFrom".$gdExtension;
+	    $function_to_write = "Image".$gdExtension;
+	 
+	    // Read the source file
+	    $source_handle = $function_to_read($filename);
+	 
+	    if ($source_handle)
+	    {
+	        // Create a blank image
+	        $destination_handle = ImageCreateTrueColor($thumbWidth, $thumbHeight);
+	 
+	        // Put the cropped area onto the blank image
+	        $check = ImageCopyResampled($destination_handle, $source_handle, 0, 0, $x1, $y1, $thumbWidth, $thumbHeight, $w, $h);
+	    }
+	 
+	    // Save the image
+	    $function_to_write($destination_handle, $newFilename);
+	    ImageDestroy($destination_handle);
+	 
+	    // Check for any errors
+	    if ( !$check ){
+	        $postDAO->imageName("");
+	    }
+		
+	}
+	
+	//Tags
+	$tags = $_POST['tags'];
+	if (trim($tags) != ''){
+		$tags_array = explode(',', $tags);
+			
+		$size = sizeof($tags_array);
+			
+		if ($size > 0){
+	
+			for ( $i=0; $i < $size; $i++ ){
+				$tags_array[$i] = trim($tags_array[$i]);
+			}
+	
+			//Creating and getting tags_id
+			$tagDAO = new TagDAO();
+			$postTagDAO = new PostTagDAO();
+			
+			$postTagDAO->deleteAllTagsByPostId($postEdit->post_id);			
+			$tags_id = $tagDAO->createOrGetId($tags_array);
+	
+			if ( $tags_id != null ){
+				
+				foreach ($tags_id as $tag_id){
+					$postTag = new PostTag();
+					$postTag->post_id = $postEdit->post_id;
+					$postTag->tag_id = $tag_id;
+					$postTagDAO->create($postTag);
+				}
+					
+			}
+	
+		}
+	}
+	
+	$postDAO->save($postEdit);
+	if ( $add_or_change_image ){
+		Util::redirect('/news/edit/afteredit/'.$_GET['post_id']);
+	}
+	else{
+		Util::redirect('/user/'.$_COOKIE['uid'].'?message=news_edit_success');
+	}
+	
+}
+
+$post_id = $_GET['post_id'];
+
+if (trim($post_id) == ''){
+	Util::redirect('/');
+}
+
+$post = $postDAO->get($post_id);
+
+if ( $post == null || ( $post->user_id != $_COOKIE['uid'] && !$sessionManager->isAdmin() ) ){
+	Util::redirect("/");
+}
+
+$tagDAO = new TagDAO();
+$tags = $tagDAO->getTagsByPostId($post_id);
+
+$tags_array = array();
+if ( sizeof ($tags) > 0 ){
+	foreach($tags as $key => $tag){
+		$tags_array[] = $tag->tag;
+	}
+	
+	$post->tags = join(', ', $tags_array);
+}
+
+
+# obrigatorio em todas as paginas
+$config['title'] = "Update your news";
+$pagina['config'] = $config;
+$pagina['categories'] = $categories;
+$pagina['afterpost'] = isset($afterpost) && $afterpost != 0 ? $afterpost : false;
+$pagina['post'] = $post;
+
+#renderizando
+$h2o = new h2o('../_templates/webuser/postEditForm.html');
+echo $h2o->render($pagina);
+?>

@@ -1,0 +1,24 @@
+<?php
+if ( isset($_POST['user_id'])){
+	require_once("../_config/_config.php");
+	
+	$userDAO = new UserDAO();
+	$user = $userDAO->get($_POST['user_id']);
+	
+	$userLocationDAO = new UserLocationDAO();
+	$userLocation = $userLocationDAO->getLast();
+	if ( $userLocation ){
+		echo json_encode($userLocation->toJson());
+		exit;
+	}
+	
+	header($_SERVER['SERVER_PROTOCOL'] . ' 500 Internal Server Error', true, 500);
+	echo "no info";
+}
+else{
+	header($_SERVER['SERVER_PROTOCOL'] . ' 500 Internal Server Error', true, 500);
+	echo "error";
+}
+
+
+?>

@@ -1,0 +1,12 @@
+<?php
+ class PostVote extends DatabaseModel{
+	public $post_vote_id = null;
+	public $post_id = null;
+	public $user_id = null;
+	public $date_vote = null;
+	public $vote_type = null;
+	
+	public $db_fields = array('post_vote_id', 'post_id','user_id','date_vote', 'vote_type');
+	
+ }
+?>

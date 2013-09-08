@@ -1,0 +1,22 @@
+<?php
+require_once("../_config/_config.php");
+
+if ( !$sessionManager-> isLoggedIn(true) ){
+	Util::redirect("/news/".$_GET['post_id']);
+}
+
+$postInappropriateDAO = new PostInappropriateDAO();
+
+if ( isset( $_GET['post_id'] ) ){
+	
+	$postInappropriate = new PostInappropriate();
+	$postInappropriate->post_id = $_GET['post_id'];
+	$postInappropriate->user_id = $_COOKIE['uid'];
+	$postInappropriate->date_mark = date('Y/m/d H:i:s');
+	$postInappropriateDAO->create($postInappropriate);
+	
+	Util::redirect('/news/' . $_GET['post_id']);
+}
+
+Util::redirect('/');
+?>

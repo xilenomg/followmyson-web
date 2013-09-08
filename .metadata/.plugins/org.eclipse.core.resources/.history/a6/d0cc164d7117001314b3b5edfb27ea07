@@ -1,0 +1,19 @@
+<?php
+require_once("../_config/_config.php");
+
+$categoryDAO = new CategoryDAO();
+$categories = $categoryDAO->getAllToMenu();
+
+
+# obrigatorio em todas as paginas
+$config['title'] = "Send a message";
+$pagina['config'] = $config;
+$pagina['categories'] = $categories;
+
+$pageInfo['name'] = 'about';
+$pagina['page'] = $pageInfo;
+
+#renderizando
+$h2o = new h2o('../_templates/web/contact_send_message.html');
+echo $h2o->render($pagina);
+?>

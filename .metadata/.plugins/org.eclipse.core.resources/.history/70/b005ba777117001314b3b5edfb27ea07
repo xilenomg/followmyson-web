@@ -1,0 +1,25 @@
+{% extends 'base.html' %} 
+
+{% block conteudo %}
+<div class="postsArea row-fluid">
+	<div class="row-fluid">
+		<div class="span8">
+			<h2>Contact Us</h2>
+			
+			<p>We are proud to have you here and we are here to listen to you now. </p>
+			
+			<p>So, that's our email: <a href="mailto:youjour@youjour.com">youjour@youjour.com</a>. 
+			Send us any message, suggestion, anything you want. We are waiting for that.</p>
+			
+			<p>Thank you,<br />
+			<b>YouJour.com</b></p>
+			
+		</div>
+	
+		<div class="span4">
+			<div class="fb-like-box" data-href="https://www.facebook.com/Youjourcom" data-width="300" data-show-faces="true" data-stream="false" data-show-border="true" data-header="false"></div>
+		</div>
+	</div>
+	
+</div>
+{% endblock %}

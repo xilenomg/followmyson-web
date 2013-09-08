@@ -1,0 +1,8 @@
+<?php
+ class Tag extends DatabaseModel{
+	public $tag_id = null;
+	public $tag = null;
+	
+	public $db_fields = array('tag_id','tag');
+ }
+?>

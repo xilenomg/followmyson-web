@@ -1,0 +1,29 @@
+<?php
+if ( isset($_POST['user']['name'], $_POST['user']['phone'], $_POST['user']['password'])){
+	require_once("../_config/_config.php");
+	
+	$userDAO = new UserDAO();
+	$user = new User();
+	$user->user_name = $_POST['user']['name'];
+	$user->user_phone = $_POST['user']['phone'];
+	$user->user_password = $_POST['user']['password'];
+	$user_id = $userDAO->create($user);
+	
+	if ( $user_id ){
+		$user = $userDAO->get($user_id);
+		if ( $user ){
+			echo json_encode($user->toJson());
+			exit;
+		}
+	}
+
+	header($_SERVER['SERVER_PROTOCOL'] . ' 500 Internal Server Error', true, 500);
+	echo "no info";
+}
+else{
+	header($_SERVER['SERVER_PROTOCOL'] . ' 500 Internal Server Error', true, 500);
+	echo "error";
+}
+
+
+?>

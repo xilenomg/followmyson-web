@@ -1,0 +1,10 @@
+<?php
+if ( isset($_POST)){
+	require_once("../_config/_config.php");
+	
+	$userDAO = new UserDAO();
+	$user = $userDAO->get(1);
+}
+
+
+?>

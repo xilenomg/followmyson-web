@@ -1,0 +1,29 @@
+<?php
+/*
+ * Post Config
+*/
+
+define('SUMMARY_GENERAL', 140);
+define('SUMMARY_INNER', 250);
+
+/*
+ * Thumbnail Config
+*/
+define('THUMBNAIL_WIDTH', 400);
+define('THUMBNAIL_HEIGHT', 300);
+
+/*
+ * Date Config
+*/
+define('DATE_FORMAT', 'm/d/Y h:i A');
+
+/*
+ * News posts
+ */
+define('NEWS_MAX_PAGE', 36);
+
+/*
+ * to Debug on production
+ */
+define('MODERATOR_KEY', 'm');
+define('MODERATOR_VALUE', 'd');

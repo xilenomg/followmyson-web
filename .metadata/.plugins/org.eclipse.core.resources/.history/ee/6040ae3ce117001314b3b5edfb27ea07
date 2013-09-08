@@ -1,0 +1,13 @@
+/**
+ * Author: Luis Felipe Corrêa Pérez
+ * Date: Mon, Sep 2 2013
+*/
+;
+
+$.fn.mapControl = function(options){
+	var collection = $(this);
+    
+    this.each(function(){
+    	
+    }
+}

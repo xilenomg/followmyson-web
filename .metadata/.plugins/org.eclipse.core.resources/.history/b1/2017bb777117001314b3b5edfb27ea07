@@ -1,0 +1,30 @@
+{% extends 'base.html' %} 
+
+{% block conteudo %}
+<div class="postsArea row">
+
+	<div class="span12">
+		<ul class="breadcrumb">
+			<li><a href="/">Home</a> <span class="divider">/</span></li>
+			<li class="active">{{newsLocation.country}}  <span class="divider">/</span> {{newsLocation.region}}  <span class="divider">/</span> {{newsLocation.city}}</li>
+		</ul>
+		<div class="row">
+			{% if postsByCity.length > 0 %}
+				{% for key, post in postsByCity %}
+				<div class="span3">
+					{% include '_templates/components/category_news.html' %}
+				</div>
+				{% endfor %}
+			{% else %}
+				<div class="alert alert-block span5">No results found for this city: {{newsLocation.country}} / {{newsLocation.region}} / {{newsLocation.city}}</div>
+			{% endif %}
+		</div>
+	</div>
+
+</div>
+
+
+
+
+
+{% endblock %}

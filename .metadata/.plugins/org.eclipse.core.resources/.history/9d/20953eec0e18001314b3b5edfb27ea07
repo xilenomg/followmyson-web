@@ -1,0 +1,36 @@
+<?php
+ class UserLocationDAO extends DatabaseAccessObject{
+ 	
+ 	public $table_name = "UserLocation";
+ 	public $entity_name = "UserLocation";
+ 	
+ 	function UserLocationDAO(){
+ 		parent::__construct();
+ 	}
+ 	
+ 	function getLastByUser($user_id){
+ 		$query = 'SELECT * FROM '.$this->table_name.' WHERE user_id = "'.$user_id.'" LIMIT 1';
+ 		return $this->QExec($query);
+ 	}
+ 	
+ 	function keepLastLocations($user_id, $amount = 10){
+ 		$query = 'DELETE FROM `'.$this->table_name.'`
+					WHERE
+ 					user_id = "'.$user_id.'"
+ 					AND  
+ 					userlocation_id NOT IN (
+					  SELECT userlocation_id
+					  FROM (
+					    SELECT userlocation_id
+					    FROM `'.$this->table_name.'`
+					    WHERE user_id = "'.$user_id.'"
+					    ORDER BY userlocation_id DESC
+					    LIMIT '.$amount.'
+					  ) foo
+					);';
+ 		$this->QExec($query);
+ 		return mysql_affected_rows();
+ 	}
+ 	
+ }
+?>

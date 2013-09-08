@@ -1,0 +1,17 @@
+<?php
+if ( isset($_POST['user']['latitude'])){
+	require_once("../_config/_config.php");
+	
+	$userDAO = new UserDAO();
+	$user = $userDAO->get(1);
+	
+	$userLocationDAO = new UserLocationDAO();
+	$userLocation = new UserLocation();
+	$userLocation->user_id = $user->user_id;
+	$userLocation->latitude = $_POST['user']['latitude'];
+	$userLocation->longitude = $_POST['user']['longitude'];
+	$userLocationDAO->create($userLocation);
+}
+
+
+?>

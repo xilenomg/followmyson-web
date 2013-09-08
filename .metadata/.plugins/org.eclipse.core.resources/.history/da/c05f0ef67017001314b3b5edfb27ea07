@@ -1,0 +1,44 @@
+<?php
+// error_reporting(E_ERROR | E_WARNING | E_PARSE | E_NOTICE);
+ini_set('display_errors', 'Off');
+
+define('URL','https://www.youjour.com');
+define('PATH', '/home/httpd/vhosts/youjour.com/httpdocs');
+define('H2O_PATH',PATH . '/_h2o');
+define('DIR_CLASSES',PATH . '/_classes');
+define('DIR_TEMPLATES',PATH . '/_templates');
+define('URL_IMAGES', URL . '/_images');
+
+define('MYSQL_LOCALHOST', 'localhost');
+define('MYSQL_USUARIO', 'youjour_db_user_');
+define('MYSQL_SENHA', '1dataminas1Q');
+define('MYSQL_BANCO', 'dataminas_youjour_db_master');
+
+define('CODIGO_SEGURANCA', sha1('DeYouJour!f15 !#æTDGQ !%$Y '));
+
+define('FACEBOOK_APP_ID','167195570129682');
+define('FACEBOOK_SECRET','d4f704d80367f39dd389e05bc9db6810');
+
+define('FACEBOOK_TOKEN_POST', 'CAACYEECQyxIBALi8pClfmc0bhYEH4a5xz8rjXzQhSttaDLhVNSifyPcJzA7mM8ZAenWlFd2lZAEBls9qF2FcFrgsWeOT9jJDDtLPN9yYpyQhVi1qCquUojJIWgIGLsCoaqj4zrDWriHDjYl0g7qxM4zXf90xGBZCYTngWhTzAZDZD');
+
+$pagina = array();
+$config = array(
+		'path' => PATH,
+		'url_atual' => $_SERVER['REQUEST_URI'],
+		'url' => URL,
+		'url_images' => URL_IMAGES
+);
+
+$config['title'] = 'YouJour.com | Being a global journalist';
+
+function __autoload($classe) {
+	if(is_file(DIR_CLASSES . '/' . $classe . '.php')){
+		require_once DIR_CLASSES . '/' . $classe . '.php';
+	}
+}
+
+function pageNotFound($msg = 'Page not found'){
+	header('HTTP/1.0 404 Not Found');
+	exit($msg);
+}
+?>

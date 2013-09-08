@@ -1,0 +1,4 @@
+RewriteEngine On
+
+#categories
+RewriteRule ^category/([0-9]+)$ /_controller/newsCategoryController.php?category_id=$1&page=1 [QSA,L]

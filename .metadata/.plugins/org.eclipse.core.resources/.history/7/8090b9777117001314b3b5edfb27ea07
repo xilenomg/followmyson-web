@@ -1,0 +1,26 @@
+{% extends 'base.html' %} 
+
+{% block conteudo %}
+<div class="postsArea row">
+
+	<div class="span12">
+		<ul class="breadcrumb">
+			<li><a href="/">Home</a> <span class="divider">/</span></li>
+			<li class="active">Trending now</li>
+		</ul>
+		<div class="row">
+			{% if postsTrending.length > 0 %}
+				{% for key, post in postsTrending %}
+				<div class="span3">
+					{% include '_templates/components/category_news.html' %}
+				</div>
+				{% endfor %}
+			{% else %}
+				<div class="alert alert-block span5">No results found for Trending</div>
+			{% endif %}
+		</div>
+	</div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,89 @@
+{% extends '../web/base.html' %} 
+
+{% block conteudo %}
+<div class="postsArea row-fluid">
+	<form action="" method="post" enctype="multipart/form-data">
+		<div class="span12">
+			<div class="row-fluid">
+				<h2>Write a News</h2>
+				
+				<h3>Title *</h3>
+				
+				<h6>General Title</h6>
+				<input name="title_general" type="text" class="input-block-level" placeholder="General Title" />
+				
+				<h6>Inner Title</h6>
+				<input name="title_inner" type="text" class="input-block-level" placeholder="Inner Title" />
+				
+				<h3>Summary *</h3>
+				<h6>General Summary</h6>
+				<input name="summary_general" type="text" class="input-block-level" placeholder="General Summary" />
+				<h6>Inner Summary</h6>
+				<input name="summary_inner" type="text" class="input-block-level" placeholder="Inner Summary" />
+				
+				<h3>Category *</h3>
+				
+				<select name="category" class="input-block-level" >
+					<option value="">Choose an Category</option>
+					{% for category in categories %}
+					<option value="{{category.category_id}}">{{category.category_name}}</option>
+					{% endfor %}
+				</select>
+				
+				<h3>Text *</h3>
+				
+			    <textarea name="post_text" class="input-block-level" rows="20" id="post_text"></textarea>
+			    
+			    <h3>Location *</h3>
+			    <div class="changeRegionArea">
+				    <div id="panel">
+				    	<input id="address" type="text" value="{% if cookies.cityName != '' %}{{cookies.cityName}}, {{cookies.regionName}}{% else %}San Francisco, California{% endif %}">
+				    	<input type="button" value="Geocode" onclick="YOUJOUR.postCreateFormController.codeAddress();">
+				    </div>
+				    <div id="map-canvas"></div>
+				    <div class="row-fluid">
+					    <div class="span4"><b>City:</b> <span class="city">not defined yet</span></div>
+					    <div class="span4"><b>Region:</b> <span class="region">not defined yet</span></div>
+					    <div class="span4"><b>Country:</b> <span class="country">not defined yet</span></div>
+				    </div>
+			    	<input name="city" id="city" type="hidden" class="input-block-level" placeholder="City" value="{{cookies.cityName}}" />
+					<input name="region" id="region" type="hidden" class="input-block-level" placeholder="Province/State" value="{{cookies.regionName}}" />
+					<input name="country" id="country" type="hidden" class="input-block-level" placeholder="Country" value="{{cookies.countryName}}" />
+			    </div>
+			    
+			    <h3>Image</h3>
+			    
+				<input type="file" name="image" title="Search image to this news">
+				
+				<p>If you don't send image it will not appear in the home page</p>
+				
+				<h3>Tags</h3>
+			    
+				<input name="tags" type="text" class="input-block-level" value="" />
+				<p>All tags must be comma-separated (e.g.: keyword1, keyword2)</p>
+				
+				<h3>Source URL</h3>
+				<input name="source" type="text" class="input-block-level" placeholder="Source URL" />
+				
+			    <button type="submit" id="postCreateFormSubmit" class="btn btnSubmitWithErrorMessage">Create and continue</button>
+			    <div class="errorMessage" id="mainErrorMessage">Check if all fields marked as required * are not empty.</div>
+				
+				
+			</div>
+		</div>
+	
+	</form>
+
+</div>
+
+{% endblock %}
+
+{% block javascript %}
+<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false"></script>
+<script src="/_assets/javascript/controller/postWriteController.js"></script>
+<script src="/_assets/javascript/controller/mapsController.js"></script>
+<script src="/_assets/javascript/controller/postCreateFormController.js"></script>
+<script>
+	YOUJOUR.postCreateFormController.currentLocation = "{{cookies.cityName}}, {{cookies.regionName}}, {{cookies.countryName}}";
+</script>
+{% endblock %}

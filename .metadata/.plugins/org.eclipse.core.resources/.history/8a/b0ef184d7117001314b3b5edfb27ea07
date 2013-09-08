@@ -1,0 +1,49 @@
+<?php
+require_once("../_config/_config.php");
+
+$arrayResponse = array('type' => '', 'message' => '');
+
+if ( !$sessionManager-> isLoggedIn(true) ){
+	$arrayResponse['type'] = 'error';
+	$arrayResponse['message'] = 'Not logged in';
+	echo json_encode($arrayResponse);
+	exit;
+}
+
+$postMediaDAO = new PostMediaDAO();
+$postMedia = $postMediaDAO->get($_POST['post_media_id']);
+
+if ( !$postMedia ){
+	$arrayResponse['type'] = 'error';
+	$arrayResponse['message'] = 'Media doesn\'t exist';
+	echo json_encode($arrayResponse);
+	exit;
+}
+
+
+$postDAO = new PostDAO();
+$post = $postDAO->get($postMedia->post_id);
+
+if ( $post == null || $post->user_id != $_COOKIE['uid'] ){
+	$arrayResponse['type'] = 'error';
+	$arrayResponse['message'] = 'You don\'t own this post';
+	echo json_encode($arrayResponse);
+	exit;
+}
+
+if ($postMedia->type == $postMedia->TYPE_IMAGE){
+	$imagePath = Util::createImagePath($postMedia->media_name);
+	@unlink($imagePath.$postMedia->media_name);
+}
+if ( $postMediaDAO->deleteById($postMedia->post_media_id) ) {
+	$arrayResponse['type'] = 'success';
+	$arrayResponse['message'] = 'Media removed successfully';
+	echo json_encode($arrayResponse);
+	exit;
+}
+else{
+	$arrayResponse['type'] = 'error';
+	$arrayResponse['message'] = 'Error when deleting. Try again later';
+	echo json_encode($arrayResponse);
+	exit;
+}

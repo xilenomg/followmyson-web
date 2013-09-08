@@ -1,0 +1,88 @@
+{% extends 'base.html' %} 
+
+{% block metas %}
+	{% if post.main_media.media_name != '' %}
+	<meta name="og:image" content="{{post.main_media.media_name | post_image_url}}" />
+	{% else %}
+	<meta name="og:image" content="https://www.youjour.com/_assets/images/logo.png" />
+	{% endif %}
+	<meta name="og:description" content="{% if post.summary_inner != "" %}{{post.summary_inner}}{% else %}{% if post.summary_general != "" %}{{post.summary_general}}{% else %}{{post.post_text | strip_tags || truncate 155}}{% endif %}{% endif %}" />
+	<meta name="DC.description" content="{% if post.summary_inner != "" %}{{post.summary_inner}}{% else %}{% if post.summary_general != "" %}{{post.summary_general}}{% else %}{{post.post_text | strip_tags || truncate 155}}{% endif %}{% endif %}" />
+	{% if post.updated_date %}
+	<meta http-equiv="last-modified" content="{{post.updated_date}} GMT" />
+	{% endif %}
+{% endblock %}
+
+{% block conteudo %}
+<div class="postsArea row-fluid hnews hentry item">
+	
+	<div class="span12">
+		<ul class="breadcrumb">
+			<li><a href="/">Home</a> <span class="divider">/</span></li>
+			<li><a href="/category/{{category.category_id}}">{{category.category_name}}</a> <span class="divider">/</span></li>
+			<li class="active">{% if post.title_inner %}{{post.title_inner}}{% else %}{{post.title_general}}{% endif %}</li>
+		</ul>
+		
+		{% include '_templates/components/post_share_bar.html' %}
+		
+		{% if isAdmin %}
+		<a href="/news/edit/{{post.post_id}}">Edit</a>
+		<a href="/news/edit/addMedias/{{post.post_id}}">Add images</a>
+		{% endif %}
+		
+		<div class="row-fluid">
+			{% if user.user_id %}
+			<span class="postAuthor">Posted by 
+				<a href="/user/{{user.user_id}}"><span class="author vcard"><span class="fn" >{{user.user_name}}</span></span></a>
+			</span>
+			<br />
+			{% endif %}
+			<span class="postDate">Registrated at <span class="updated" title="{{ post.registration_date | date 'Y-m-d H:i:s T'}}">{{ post.registration_date | date 'm/d/Y h:i A T' }}</span>{% if post.updated_date %} - Updated at {{ post.updated_date | date 'm/d/Y h:i A' }}{% endif %}</span>
+		</div>
+		
+		<div class="row-fluid">
+			<div class="span12">
+				<div class="row-fluid">	
+					<div class="span10">
+						<h3><span class="entry-title">{% if post.title_inner %}{{post.title_inner}}{% else %}{{post.title_general}}{% endif %}</span></h3>
+						<h5 class="gray">{{post.summary_inner}}</h5>
+					</div>
+				</div>
+				
+				<div class="postText">
+					{% if post.main_media.media_name != '' %}
+						<img src="{{post.main_media.media_name | post_image_url}}" alt="{% if post.title_general %}{{post.title_general}}{% else %}{{post.title_inner | truncate }}{% endif %}" class="span4 postImage" />
+					{% endif %}
+					<b>{% if post.country %}{{post.country}}{% endif %}
+					{% if post.region %}{% if post.country %}, {% endif %}{{post.region}}{% endif %}
+					{% if post.city %}{% if post.country OR post.region %}, {% endif %}{{post.city}}{% endif %}</b>
+					{% if post.post_text %}{% if post.country OR post.region OR post.city %} - {% endif %}{{ post.post_text | safe }}{% endif %}
+				</div>
+				
+				{% if post.source %}
+				<div class="gray">
+					<b>Source URL: </b><br /><a href="{{post.source}}" target="_blank">{{post.source}}</a>
+				</div>
+				{% endif %}
+			</div>
+		</div>
+		<hr />
+		{% if post.medias.length > 1 %}
+			<h4>News Gallery</h4>
+			{% with post.medias as medias %}
+				{% include '_templates/components/galleria.html' %}
+			{% endwith %}
+			<hr />
+		{% endif %}
+		{% include '_templates/components/post_share_bar.html' %}
+	</div>
+</div>
+{% endblock %}
+
+{% block javascript %}
+	<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="https://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+	{% if post.medias.length > 1 %}
+		<script src="/_assets/javascript/galleria/galleria-1.2.9.min.js"></script>
+		<script src="/_assets/javascript/controller/postController.js"></script>
+	{% endif %}
+{% endblock %}

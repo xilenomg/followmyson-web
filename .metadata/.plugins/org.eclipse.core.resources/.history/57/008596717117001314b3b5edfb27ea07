@@ -1,0 +1,80 @@
+{% extends '../web/base.html' %} 
+
+{% block conteudo %}
+<div class="postsArea row-fluid">
+	<div class="row-fluid">
+		
+		<div class="row-fluid">
+			<div class="span6">
+				<div class="row-fluid">
+					<h2>Adding Image</h2>
+				</div>
+				<form action="/news/edit/sendMedias/{{post.post_id}}" method="post" enctype="multipart/form-data" id="UploadFormImage">
+					<div class="row-fluid">
+						<div class="input" style="margin-bottom: 10px;">
+							<input name="image" type="file" />
+						</div>
+					</div>
+					<div class="row-fluid">
+						<input type="submit" id="SubmitButton" value="Upload" />
+					</div>
+					<div class="row-fluid">Minimun value for width and height: 400px and 300px</div>
+				</form>
+			</div>
+			
+			<div class="span6">
+				<div class="row-fluid">
+					<h2>Adding Youtube Video</h2>
+				</div>
+				<form action="/news/edit/sendMedias/{{post.post_id}}" method="post" enctype="multipart/form-data" id="UploadFormVideo">
+					<div class="row-fluid">
+						<div class="input-prepend">
+							<span class="add-on">http://www.youtube.com/watch?v=</span>
+							<input class="span6" id="prependedInput" name="video_id" maxlength="11" type="text" placeholder="YouTubeCODE">
+						</div>
+					</div>
+					<div class="row-fluid">
+						<input type="submit" id="SubmitButton" value="Upload" />
+					</div>					
+				</form>
+			</div>
+		</div>
+	</div>
+	
+	<div id="output"></div>
+	
+	<h2>Current Photos & Videos</h2>
+	<div class="row-fluid">
+		{% if post.medias.length == 0 %}
+			<div class="alert alert-block span5">No media found for this post</div>
+		{% endif %}
+		<ul class="thumbnails">
+		{% for index, media in post.medias %}
+			
+			<li class="span4 postMedia{{media.post_media_id}}">
+			{% if media.type == 'image' %}
+				<img src='{{media.media_name | post_image_url}}' class="thumbnail" />
+				<button class="btn btn-danger deleteButton" data-post-media-id="{{media.post_media_id}}">Delete</button>
+			{% else %}
+				<iframe height="200" src="//www.youtube.com/embed/{{media.media_name}}" frameborder="0" allowfullscreen></iframe>
+				<button class="btn btn-danger deleteButton" data-post-media-id="{{media.post_media_id}}">Delete</button>
+			{% endif %}
+			</li>
+			
+		{% endfor %}
+	
+		</ul>
+	</div>
+</div>
+
+{% endblock %} 
+
+{% block javascript %}
+<script src="/_assets/javascript/jquery.form.js"></script>
+<script src="/_assets/javascript/controller/postAddMediaController.js"></script>
+<style>
+.row-fluid [class*="span"]:first-child {
+	margin-left: auto;
+}
+</style>
+{% endblock %}

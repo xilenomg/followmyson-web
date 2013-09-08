@@ -1,0 +1,80 @@
+var FMS = FMS || {};
+
+FMS.User = function(id, name, phone){
+	this.id = id;
+	this.name = name;
+	this.phone = phone;
+	this.userLocation = new FMS.UserLocation(this);
+	
+	this.getId = function(){
+		console.log(this.id);
+		return this.id;
+	};
+	
+	this.getName = function(){
+		return this.name;
+	}
+	
+	this.getPhone = function(){
+		return this.phone;
+	};
+	
+	this.getMarker = function(){
+		return this.userLocation.marker;
+	}
+};
+
+
+FMS.UserLocation = function(localUser){
+	
+	var thisUserLocation = this;
+	var localUser = localUser;
+	
+	var marker = null;
+	
+	this.getUserLocation = function(){
+		$.ajax("/api/getLocation.php",{
+			dataType: "json",
+			type: "POST",
+			beforeSend: function(){
+			},
+			data:{
+				"user_id" : localUser.getId(),
+				"user_phone" : localUser.getPhone()
+			}
+		}).done(function(data){
+			if ( marker == null ){
+				marker = new google.maps.Marker({
+				    map: FMS.mapsController.map,
+				    title: data.user_id,
+				    position:  new google.maps.LatLng(data.latitude, data.longitude),
+				    draggable: false
+				});
+			}
+			else{
+				var newLatLng = new google.maps.LatLng(data.latitude, data.longitude);
+				marker.setPosition(newLatLng);
+			}
+			
+		});
+	}
+	
+	this.getMarker = function(){
+		return marker;
+	}
+	
+	this.startLocating = function(){
+		thisUserLocation.getUserLocation();
+//		setInterval(function(){
+//			thisUserLocation.getUserLocation();
+//		},5000);
+	}
+};
+
+$(document).ready(function(){
+	var user = new FMS.User(1, "Luis Perez", "+553183346577");
+	user.userLocation.startLocating();
+	
+	var user2 = new FMS.User(16, "Luis Perez", "+553183346578");
+	user2.userLocation.startLocating();
+});

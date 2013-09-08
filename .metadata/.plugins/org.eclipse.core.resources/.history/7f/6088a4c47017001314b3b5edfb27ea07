@@ -1,0 +1,63 @@
+<?php
+ class TagDAO extends DatabaseAccessObject{
+ 	
+ 	public $table_name = "Tag";
+ 	public $entity_name = "Tag";
+ 	
+ 	function TagDAO(){
+ 		parent::__construct();
+ 	}
+ 	
+ 	
+ 	function createOrGetId($tags_array){
+ 		foreach ( $tags_array as $tag){
+ 			$query = 'INSERT INTO '.$this->table_name.' (tag)
+ 			SELECT * FROM (SELECT "'.trim($tag).'") AS tmp
+ 			WHERE NOT EXISTS (
+ 			SELECT tag FROM '.$this->table_name.' WHERE tag = "'.$tag.'"
+ 			) LIMIT 1';
+ 			
+ 			$result = $this->QExec($query);
+ 		}
+ 		
+ 		$tags_id_result = $this->getTagIds($tags_array);
+ 		
+ 		if ( $tags_id_result != null ){
+ 			$tags_id = array();
+ 			while ( $tag_id = mysql_fetch_array($tags_id_result) ){
+ 				$tags_id[] = $tag_id['tag_id'];
+ 			}
+ 			return $tags_id;
+ 		}
+ 		
+ 		return null;
+ 	}
+ 	
+ 	function getTagIds($tags_array){
+ 		$tags = implode("','", $tags_array);
+ 		$query = 'SELECT tag_id FROM '.$this->table_name.' WHERE tag in (\''. $tags.'\')';
+ 		
+ 		$result = $this->QExec($query);
+ 		if ( mysql_num_rows($result) > 0){
+ 			return $result;
+ 		}
+ 		
+ 		return null;
+ 	}
+ 	
+ 	function getTagsByPostId($post_id){
+ 		$query = 'SELECT * FROM Tag WHERE tag_id in ( SELECT tag_id FROM Post_Tag WHERE post_id = "'.$post_id.'")';
+ 		$exec = $this->Qexec($query);
+ 		if ( mysql_num_rows($exec) > 0){
+	 		$tags = array();
+	 		while ( $tag = mysql_fetch_object($exec, 'Tag') ){
+	 			$tags[] = $tag;
+	 		}
+	 		
+	 		return $tags;
+ 		}
+ 		
+ 		return null;
+ 	}
+ }
+?>

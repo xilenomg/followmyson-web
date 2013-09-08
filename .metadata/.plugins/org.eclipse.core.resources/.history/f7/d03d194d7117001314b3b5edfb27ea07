@@ -1,0 +1,22 @@
+<?php
+require_once("../_config/_config.php");
+
+$categoryDAO = new CategoryDAO();
+$categories = $categoryDAO->getAllToMenu();
+
+$postDAO = new PostDAO();
+$postsByCity = $postDAO->getPostByCity($_GET['country'], $_GET['region'], $_GET['city']);
+
+
+
+# obrigatorio em todas as paginas
+$config['title'] = 'News from ' . $_GET['country'] . '/' . ($_GET['region'] != '' ? $_GET['region'] . '/' : '') . $_GET['city'] ;
+$pagina['newsLocation'] = array('city' => $_GET['city'], 'region' => $_GET['region'], 'country' => $_GET['country']); 
+$pagina['config'] = $config;
+$pagina['categories'] = $categories;
+$pagina['postsByCity'] = $postsByCity;
+
+#renderizando
+$h2o = new h2o('../_templates/web/newsCity.html');
+echo $h2o->render($pagina);
+?>

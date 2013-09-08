@@ -1,0 +1,24 @@
+var YOUJOUR = YOUJOUR || {};
+
+YOUJOUR.postController = (function(){
+	var self = {};
+	
+	self.initialize = function(){
+		//Galleria Setup
+		Galleria.configure({
+	        debug: false
+	    });
+		
+		// Load the classic theme
+	    Galleria.loadTheme('/_assets/javascript/galleria/themes/classic/galleria.classic.min.js');
+	    
+	    // Initialize Galleria
+	    Galleria.run('#galleria');
+	};
+	
+	return self;
+}());
+
+$(document).ready(function(){
+	YOUJOUR.postController.initialize();
+});

@@ -1,0 +1,5 @@
+<?php
+require_once("../../_config/_config.php");
+echo '<h2>Updating News Views Count</h2>';
+include 'updateNewsViewsCount.php';
+echo '<hr />';

@@ -1,0 +1,80 @@
+<?php
+require_once("../_config/_config.php");
+
+$categoryDAO = new CategoryDAO();
+$categories = $categoryDAO->getAllToMenu();
+
+$isOwnProfile = isset($_COOKIE['uid']) && $_COOKIE['uid'] != 0 && $_GET['user_id'] == $_COOKIE['uid'];
+
+$userDAO = new UserDAO();
+$user = $userDAO->get($_GET['user_id']);
+
+if ($user == null){
+	Util::redirect('/');
+}
+
+$postDAO = new PostDAO();
+$postsByUser = $postDAO->getPostByUser($user->user_id);
+
+if ( isset($_POST['name']) && $isOwnProfile){
+	$gender = $_POST['gender'] == 'M' || $_POST['gender'] == 'F' ? $_POST['gender'] : '';
+	$userAux = $user;
+	$user->name = $_POST['name'];
+	$user->gender = $gender;
+	$user->hometown = $_POST['hometown'];
+	$user->mobile_phone = $_POST['mobile_phone'];
+	$user->birthday = $_POST['birthday'];
+	$user->private_user_email = isset($_POST['private_email']) ? true : false;
+	$user->private_mobile_phone = isset($_POST['private_mobile_phone']) ? true : false;
+	$user->private_birthday = isset($_POST['private_birthday']) ? true : false;
+	
+	if ( !$userDAO->save($user) ){
+		$user = $userAux;
+	}
+}
+
+if ( $isOwnProfile ){
+	$userFacebook = $facebook->getUser();
+	if ($userFacebook) {
+		try {
+			$userAux = $user;
+			$userFacebookProfile = $facebook->api('/me');
+		} catch (FacebookApiException $e) {
+			$userFacebook = null;
+			$user->facebook_token = '';
+			$userDAO->save($user);
+		}
+	}
+	
+	// Login or logout url will be needed depending on current user state.
+	$actionUrl = '';
+	$params = array(
+			'scope' => 'user_birthday,publish_actions'
+	);
+	if ($user->user_id == 3){
+		$params['scope'] = $params['scope'] . ', manage_pages, publish_stream';
+	}
+	if (!$userFacebook) {
+		$params['redirect_uri'] = URL . '/user/facebook/login';
+		$actionUrl = $facebook->getLoginUrl($params);
+	}	
+	else{
+		$params['next'] = URL . '/user/facebook/logout';
+		$actionUrl = $facebook->getLogoutUrl($params);
+	}
+	$pagina['actionUrl'] = $actionUrl;
+}
+
+
+# obrigatorio em todas as paginas
+$config['title'] = $user->user_name . '\'s profile';
+$pagina['config'] = $config;
+$pagina['categories'] = $categories;
+$pagina['user'] = $user;
+$pagina['postsByUser'] = $postsByUser;
+$pagina['own_profile'] = $isOwnProfile;
+
+#renderizando
+$h2o = new h2o('../_templates/web/user.html');
+echo $h2o->render($pagina);
+?>

@@ -1,0 +1,216 @@
+<?php
+if ( !function_exists('pre')){
+
+	function pre($val){
+		return '<pre>'.(var_export($val, true)).'</pre><hr/>';
+	}
+
+}
+
+if ( !function_exists('getMonth')){
+	function getMonth($month){
+		switch(strtolower($month)){
+			case 'jan': return 1;
+			case 'feb': return 2;
+			case 'mar': return 3;
+			case 'apr': return 4;
+			case 'may': return 5;
+			case 'jun': return 6;
+			case 'jul': return 7;
+			case 'aug': return 8;
+			case 'sep': return 9;
+			case 'oct': return 10;
+			case 'nov': return 11;
+			case 'dec': return 12;
+				
+		}
+
+	}
+}
+
+
+require_once("../../_config/_config.php");
+error_reporting(E_ERROR | E_WARNING | E_PARSE | E_NOTICE);
+ini_set('display_errors', 'On');
+
+$categoryList = array();
+$categoryList[] = array('http://noticias.terra.com.br/rss/Controller?channelid=5a94baa8deb05310VgnVCM4000009bf154d0RCRD&ctName=atomo-noticia&lg=pt-br','Daily');
+$categoryList[] = array('http://noticias.terra.com.br/rss/Controller?channelid=058251a77fb05310VgnVCM4000009bf154d0RCRD&ctName=atomo-noticia&lg=pt-br', 'Politics');
+$categoryList[] = array('http://noticias.terra.com.br/rss/Controller?channelid=b8443aca7323a310VgnVCM20000099cceb0aRCRD&ctName=atomo-noticia&lg=pt-br','Technology');
+$categoryList[] = array('http://noticias.terra.com.br/rss/Controller?channelid=881842b39854a310VgnVCM3000009acceb0aRCRD&ctName=atomo-noticia&lg=pt-br','Science');
+// $categoryList[] = array('','');
+// $categoryList[] = array('','');
+// $categoryList[] = array('','');
+// $categoryList[] = array('','');
+// $categoryList[] = array('','');
+
+foreach ( $categoryList as $categoryItem ){
+	
+	
+	$url = $categoryItem[0];
+	$category_name = $categoryItem[1];
+	
+	echo '<h1>'.$category_name.'</h1><h6>'.$url.'</h6>';
+	
+	$categoryDAO = new CategoryDAO();
+	$category = $categoryDAO->getByField('category_name', $category_name);
+	if ( !$category ){
+		$category = new Category();
+		$category->category_id = '';
+	}
+	
+	
+	$content = file_get_contents($url);
+	$content = str_replace('<![CDATA[', '', $content);
+	$content = str_replace(']]>', '', $content);
+	
+	$saw = new Nokogiri($content);
+	
+	$items = $saw->get('item')->toArray();
+	
+	$count = 0;
+	foreach($items as $item) {
+// 		echo pre($item);
+		$post = new Post();
+		$post->title_general = $item['title'][0]['#text'];
+		
+		$postDAO = new PostDAO();
+		$postCheck = $postDAO->getByField('title_general', $post->title_general);
+		
+		if ( $postCheck ){
+			echo 'J‡ existe';
+			echo '<hr />';
+// 			break;
+			continue;
+		}
+		
+		
+//		$post->summary_general = strip_tags($item['content'][0]['#text']);
+		
+		echo 'DATE: ';
+		echo $string = $item['pubdate'][0]['#text'];
+		
+
+		//Tue, 6 Aug 2013 00:56:24 +0000
+		$pattern = '/(\w+), (\d+) (\w+) (\d+) (\d+):(\d+):(\d+) ([\+,-]+)(\d+)(\d+)(\d+)(\d+)/i';
+		$replacement = '$4/$3/$2 $5:$6:$7';
+		$dados = preg_replace($pattern, $replacement, $string);
+		
+		$pattern2 = '/(\w+), (\d+) (\w+) (\d+) (\d+):(\d+):(\d+) ([\+,-]+)(\d+)(\d+)(\d+)(\d+)/i';
+		$replacement2 = '$9$10';
+		$dados2 = preg_replace($pattern2, $replacement2, $string);
+		
+		$data_hora = split(' ', $dados);
+		$hora = split(':', $data_hora[1]);
+		$hora[0] = $hora[0] + $dados2;
+		$data_hora[1] = $hora;
+		$data = split('/', $data_hora[0]);
+		$data[1] = getMonth($data[1]);
+		$data_hora[0] = join('/', $data);
+		echo ' - ';
+	
+		echo $post->registration_date = date('Y/m/d H:i:s', mktime($hora[0], $hora[1], $hora[2], $data[1], $data[2], $data[0]));
+		
+		echo '<br /><br />';
+// 		exit;
+		echo $post->source = $item['#text'][0];
+// 		echo $post->source = "http://noticias.terra.com.br/brasil/policia/cinco-sao-assassinados-dentro-de-casa-de-pms-em-sp,2cbd2d7c19050410VgnVCM20000099cceb0aRCRD.html";
+		echo '<br /><br />';
+		
+		$content2 = file_get_contents($post->source);
+		
+		$saw_inner = new Nokogiri($content2);
+		$items_inner = $saw_inner->get('#news-container p.text')->toHTML();
+		$post->post_text = '<p>'.str_replace('[$$P$$]','</p><p>',strip_tags(join('[$$P$$]',$items_inner))).'</p>';
+	
+		
+		
+		$title_inner = $saw_inner->get('h2.ttl-main')->toHTML();
+		$post->title_inner = strip_tags($title_inner[0]);
+		
+		
+		
+// 		$summary_inner = $saw_inner->get('.materia-titulo h2')->toHTML();
+		
+// 		$post->summary_inner = strip_tags($summary_inner[0]);
+		
+		$post->category_id = $category->category_id;
+		
+		$post->activated = true;
+		
+		$items_image = $saw_inner->get('.image-container img')->toArray();
+		$postMedia = null;
+		$medias = array();
+		if ( sizeof($items_image) > 0 ) {
+			foreach ( $items_image as $item_image ){
+				echo 'getting image<br/>';
+				$url = $item_image['src'];
+				$image_name_array = split('/', $item_image['src']);
+				$image_name = $image_name_array[sizeof($image_name_array) - 1];
+				
+				$img = PATH.'/_uploads/news/tmp/' . $image_name;
+				file_put_contents($img, file_get_contents($url));
+				
+				
+				//IMAGE
+				$extensionArray = explode('.', $img);
+				$extension = $extensionArray[sizeof($extensionArray)-1];
+				
+				$imageName = sha1($img . rand(0,50000) . date('YmdHis')) . '.' . $extension;
+				$imagePath = Util::createImagePath($imageName);
+				
+				$imageSize = getimagesize($img);
+				$proporcao = $imageSize[0]/$imageSize[1];
+				echo 'Image proportion: '. $proporcao.'</br >';
+				if ( $proporcao > 0.33 && $proporcao < 2.2 && $imageSize[0] > 300){
+				
+					if ( copy($img, $imagePath.$imageName) ){
+						echo 'image copied';
+						unlink( $img );
+						$size = getimagesize($imagePath.$imageName);
+						$originalHeight = $size[1];
+						$newHeight = Imagem::getAltura($imagePath.$imageName, 500);
+						$resizeImageResult = Imagem::geraMiniatura($imagePath.$imageName,500,$newHeight);
+					
+						if ( $resizeImageResult != null ){
+							$postMedia = new PostMedia();
+							$postMedia->media_name = $imageName;
+							$postMedia->type = $postMedia->TYPE_IMAGE;
+							$postMedia->date_post = date('Y/m/d H:i:s');
+							$medias[] = $postMedia;
+						}
+					}
+				}
+			}
+			
+			//END IMAGE
+		}
+		
+		$post_id = $postDAO->create($post);
+		
+		
+		if ( $post_id){
+			if ( sizeof($medias) > 0 && $post_id ){
+				$postMediaDAO = new PostMediaDAO();
+				foreach($medias as $media ){
+					$media->post_id = $post_id;
+					
+					$media_id = $postMediaDAO->create($media);
+					if ( $media_id ){
+						echo 'image saved';
+					}
+				}
+			}
+			echo 'salvo';
+			
+			echo '<hr />';
+			$count++;
+		}
+		
+		if ( $count > 10 ){
+			break;
+		}
+		
+	}
+}
+

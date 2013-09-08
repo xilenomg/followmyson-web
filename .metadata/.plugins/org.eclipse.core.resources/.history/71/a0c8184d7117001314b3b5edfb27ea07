@@ -1,0 +1,102 @@
+<?php
+require_once("../_config/_config.php");
+
+$arrayResponse = array('type' => '', 'message' => '');
+
+if ( !$sessionManager-> isLoggedIn(true) ){
+	$arrayResponse['type'] = 'error';
+	$arrayResponse['message'] = 'Not logged in';
+	echo json_encode($arrayResponse);
+	exit;
+}
+
+if ( !isset($_GET['post_id'])){
+	$arrayResponse['type'] = 'error';
+	$arrayResponse['message'] = 'News doesn\'t exist';
+	echo json_encode($arrayResponse);
+	exit;
+}
+
+$postMediaDAO = new PostMediaDAO();
+$postDAO = new PostDAO();
+$post = $postDAO->get($_GET['post_id']);
+
+if ( $post == null || ( $post->user_id != $_COOKIE['uid'] && !$sessionManager->isAdmin() ) ){
+	$arrayResponse['type'] = 'error';
+	$arrayResponse['message'] = 'You don\'t own this post';
+	echo json_encode($arrayResponse);
+	exit;
+}
+
+if (isset($_FILES['image']) && trim($_FILES['image']['name']) != ''){
+
+	$extensionArray = explode('.', $_FILES['image']['name']);
+	$extension = $extensionArray[sizeof($extensionArray)-1];
+
+	$imageName = sha1($_FILES['image']['name'] . rand(0,50000) . date('YmdHis')) . '.' . $extension;
+	$imagePath = Util::createImagePath($imageName);
+	if ( copy($_FILES['image']['tmp_name'], $imagePath.$imageName) ){
+		$size = getimagesize($imagePath.$imageName);
+		
+		//validing size
+		if ( $size && ( ($size[0] >= 400 && $size[1] >= 300) || ($size[1] >= 400 && $size[0] >= 300) ) ) {
+			$prop1 = $size[0] / $size[1];
+			$prop2 = $size[1] / $size[0];
+				
+			if ( $prop1 > 2 || $prop1 < 0.5 || $prop2 > 2 || $prop2 < 0.5){
+				$arrayResponse['type'] = 'error';
+				$arrayResponse['message'] = 'This image is too high or too wide for our page. Use any crop to make it better';
+				echo json_encode($arrayResponse);
+				@unlink($imagePath.$imageName);
+				exit;
+			}
+			
+			$originalHeight = $size[1];
+			$newHeight = Imagem::getAltura($imagePath.$imageName, 500);
+			$resizeImageResult = Imagem::geraMiniatura($imagePath.$imageName,500,$newHeight);
+	
+			if ( $resizeImageResult != null ){
+				$postMediaDAO = new PostMediaDAO();
+				$postMedia = new PostMedia();
+				$postMedia->media_name = $imageName;
+				$postMedia->type = $postMedia->TYPE_IMAGE;
+				$postMedia->date_post = date('Y/m/d H:i:s');
+				$postMedia->post_id = $post->post_id;
+				$postMediaDAO->create($postMedia);
+				
+				$arrayResponse['type'] = 'success';
+				$arrayResponse['message'] = Util::createImageUrl($imageName).$imageName;
+				echo json_encode($arrayResponse);
+				exit;
+			}
+		} 
+		else{
+			$arrayResponse['type'] = 'error';
+			$arrayResponse['message'] = 'Minimun value for width and height must be respected';
+			echo json_encode($arrayResponse);
+			@unlink($imagePath.$imageName);
+			exit;
+		}
+	}
+}
+else{
+	if ( isset($_POST['video_id'])){
+		
+		$postMedia = new PostMedia();
+		$postMedia->media_name = $_POST['video_id'];
+		$postMedia->type = $postMedia->TYPE_VIDEO;
+		$postMedia->date_post = date('Y/m/d H:i:s');
+		$postMedia->post_id = $post->post_id;
+		$postMediaDAO->create($postMedia);
+		
+		$arrayResponse['type'] = 'success';
+		$arrayResponse['message'] = $_POST['video_id'];
+		echo json_encode($arrayResponse);
+		exit;
+	}
+	
+	$arrayResponse['type'] = 'error';
+	$arrayResponse['message'] = 'No info to add';
+	echo json_encode($arrayResponse);
+	exit;
+}

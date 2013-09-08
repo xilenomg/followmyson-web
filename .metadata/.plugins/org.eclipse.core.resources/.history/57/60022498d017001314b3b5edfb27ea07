@@ -1,0 +1,5 @@
+var FMS = FMS || {};
+
+FMS.UserLocation = function(user){
+	this.user = $(user);
+};

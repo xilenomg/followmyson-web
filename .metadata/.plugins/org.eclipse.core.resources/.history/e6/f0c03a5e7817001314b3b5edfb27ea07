@@ -1,0 +1,12 @@
+<?php
+ class UserLocationDAO extends DatabaseAccessObject{
+ 	
+ 	public $table_name = "UserLocation";
+ 	public $entity_name = "User";
+ 	
+ 	function UserDAO(){
+ 		parent::__construct();
+ 	}
+ 	
+ }
+?>

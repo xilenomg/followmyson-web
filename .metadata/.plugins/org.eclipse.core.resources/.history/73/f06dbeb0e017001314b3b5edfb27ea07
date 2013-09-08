@@ -1,0 +1,20 @@
+{% extends 'base.html' %} 
+
+{% block content %}
+<header id="main">
+	<h1>FollowMySon</h1>
+</header>
+<div id="map-canvas"></div>
+{% endblock %}
+
+
+{% block javascript %}
+<script src="http://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false"></script>
+<script src="/_assets/javascript/main.js"></script>
+<script src="/_assets/javascript/mapsController.js"></script>
+<script>
+$(document).ready(function(){
+	FMS.mapsController.initialize(document.getElementById('map-canvas'), null, null, null);		
+});
+</script>
+{% endblock %}

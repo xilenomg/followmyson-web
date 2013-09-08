@@ -1,0 +1,47 @@
+<?php
+require_once("../_config/_config.php");
+
+$categoryDAO = new CategoryDAO();
+$categories = $categoryDAO->getAllToMenu();
+
+
+if ( isset($_POST['user_name']) ){
+
+	$userDAO = new UserDAO();
+	$user = new User();
+	$userExists = $userDAO->getByEmail($_POST['user_email']);
+	
+	if ( $userExists == null){
+		if ( $_POST['user_password'] == $_POST['user_confirm_password'] ) {
+			$user->user_name = $_POST['user_name'];
+			$user->user_email = $_POST['user_email'];
+			$user->user_password = sha1($_POST['user_password']);
+		
+			if ( $userDAO->create($user) ){
+				Util::redirect("/?message=signup_user_success");
+			}
+			else{
+				Util::redirect("/signup?message=signup_user_error");
+			}
+		}
+		else{
+			Util::redirect("/signup?message=signup_user_password_match");
+		}
+	}
+	else{
+		Util::redirect("/signup?message=signup_user_exists");
+	}
+	exit;
+	
+}
+
+
+# obrigatorio em todas as paginas
+$config['title'] = "Sign Up for YouJour.com";
+$pagina['config'] = $config;
+$pagina['categories'] = $categories;
+
+#renderizando
+$h2o = new h2o('../_templates/webuser/userSignUp.html');
+echo $h2o->render($pagina);
+?>

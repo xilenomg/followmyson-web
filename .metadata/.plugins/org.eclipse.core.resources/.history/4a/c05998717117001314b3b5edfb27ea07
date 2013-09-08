@@ -1,0 +1,11 @@
+{% extends '../web/base.html' %} 
+
+{% block conteudo %}
+	
+	<div class="pageError textCenter">
+	
+		<img src="/_assets/images/error/404.png" />
+	
+	</div>
+	
+{% endblock %}

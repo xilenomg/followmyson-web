@@ -1,0 +1,26 @@
+var YOUJOUR = YOUJOUR || {};
+
+
+YOUJOUR.util = (function(){
+	var self = {};
+	
+	self.findBootstrapEnvironment = function () {
+	    var envs = ['phone', 'tablet', 'desktop'];
+
+	    $el = $('<div>');
+	    $el.appendTo($('body'));
+
+	    for (var i = envs.length - 1; i >= 0; i--) {
+	        var env = envs[i];
+
+	        $el.addClass('hidden-'+env);
+	        if ($el.is(':hidden')) {
+	            $el.remove();
+	            return env
+	        }
+	    };
+	}
+	
+	return self;
+	
+}());

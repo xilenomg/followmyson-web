@@ -1,0 +1,11 @@
+var YOUJOUR = {};
+
+$(document).ready(function(){
+	
+	if ( $(".userMessage").length > 0 ){
+		setTimeout(function(){
+			$(".userMessage").fadeOut();
+		}, 5000);
+	}
+	
+});

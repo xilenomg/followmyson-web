@@ -1,0 +1,22 @@
+<?php
+require_once("../_config/_config.php");
+
+if ( isset($_POST['email'], $_POST['password']) && trim($_POST['email']) != "" && trim($_POST['password']) != ""){
+	$userDAO = new UserDAO();
+	$user = $userDAO->checkCredentials($_POST['email'], $_POST['password'], false); 
+	if ( $user != null ){
+		$sessionManager->createCookies($user);
+		if (!isset($_COOKIE['cityName'], $_COOKIE['regionName'], $_COOKIE['countryName'])){
+			if ( trim($user->current_city) != '') {
+				setcookie('cityName', $user->current_city, SESSION_TIME, SESSION_PATH);
+				setcookie('regionName', $user->current_region, SESSION_TIME, SESSION_PATH);
+				setcookie('countryName', $user->current_country, SESSION_TIME, SESSION_PATH);
+				setcookie('rbi', 1, SESSION_TIME, SESSION_PATH);
+			}
+		}
+		Util::redirect("/");
+	}
+	Util::redirect("/?message=user_signin_doesnt_exist");
+}
+Util::redirect("/?message=user_signin_empty");
+?>

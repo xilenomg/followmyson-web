@@ -1,0 +1,32 @@
+<?php
+ class PostVoteDAO extends DatabaseAccessObject{
+ 	
+ 	public $table_name = "Post_Vote";
+ 	public $entity_name = "Post_Vote";
+ 	
+ 	function PostVoteDAO(){
+ 		parent::__construct();
+ 	}
+ 	
+ 	function getVotesByPost($post_id){
+ 		$query = 'SELECT SUM(vote_type) as countVotes FROM ' . $this->table_name . ' WHERE post_id  = "'.$post_id.'"';
+ 		$result = $this->QExec($query);
+ 		if ( $result && mysql_num_rows($result) > 0){
+ 			$votes = mysql_result($result, 0, "countVotes");
+ 			$votes = $votes != 0 ? $votes : 0;
+ 			return $votes;
+ 		}
+ 		return null;
+ 	}
+ 	
+ 	function deleteUserVoteByPost($user_id, $post_id){
+ 		$query = 'DELETE FROM ' . $this->table_name . ' WHERE post_id = "'.$post_id.'" AND user_id = "'.$user_id.'"';
+ 		$result = $this->QExec($query);
+ 		if ( $result && mysql_affected_rows()){
+ 			return true;
+ 		}
+ 		return false;
+ 	}
+ 	
+ }
+?>

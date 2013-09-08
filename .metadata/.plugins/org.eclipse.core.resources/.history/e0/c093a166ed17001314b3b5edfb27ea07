@@ -1,0 +1,8 @@
+<?php
+class User extends DatabaseModel{
+	public $user_id = null;
+	public $user_name = null;
+	
+	public $db_fields = array('user_id','user_name');
+}
+?>

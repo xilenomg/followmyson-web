@@ -1,0 +1,22 @@
+<?php
+require_once("../_config/_config.php");
+
+if ( !$sessionManager-> isLoggedIn(true) || !isset($_GET['post_id'])){
+	Util::redirect("/");
+}
+
+$postDAO = new PostDAO();
+$post = $postDAO->get($_GET['post_id']);
+
+if ( $post == null || $post->user_id != $_COOKIE['uid'] ){
+	Util::redirect("/");
+}
+
+$post->activated = '0';
+if ( $postDAO->save($post) ){
+	Util::redirect("/user/" . $_COOKIE['uid'] . '?message=news_delete_successfully');
+}
+else{
+	Util::redirect("/user/" . $_COOKIE['uid'] . '?message=news_delete_error');
+}
+?>

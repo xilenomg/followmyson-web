@@ -1,0 +1,31 @@
+<?php
+require_once("../_config/_config.php");
+
+if ( !$sessionManager-> isLoggedIn(true) ){
+	Util::redirect("/");
+}
+
+if (isset($_COOKIE['uid'])){
+	$userDAO = new UserDAO();
+	$user = $userDAO->get($_COOKIE['uid']);
+	$userFacebook = $facebook->getUser();
+	if ($userFacebook) {
+		try {
+			$userAux = $user;
+			$userFacebookProfile = $facebook->api('/me');
+			$user->facebook_token = $facebook->getAccessToken();
+			$user->facebook_token_date = date('Y/m/d H:m:s');
+			$user->facebook_uid = $facebook->getUser();
+			if ( !$userDAO->save($user) ){
+				$user = $userAux;
+			}
+			Util::redirect('/user/'.$_COOKIE['uid']);
+		} catch (FacebookApiException $e) {
+			$userFacebook = null;
+		}
+	}
+}
+
+Util::redirect('/');
+
+?>

@@ -1,0 +1,275 @@
+<?php
+ class PostDAO extends DatabaseAccessObject{
+ 	
+ 	public $table_name = "Post";
+ 	public $entity_name = "Post";
+ 	
+ 	public $postMediaDAO = null;
+ 	
+ 	function PostDAO(){
+ 		parent::__construct();
+ 		$this->postMediaDAO = new PostMediaDAO();
+ 	}
+ 	
+ 	function getWhereLocationClause($city, $region, $country){
+ 		$locationClauseArray = array();
+ 		
+ 		if ( trim($country) != ''){
+ 			$locationClauseArray[] = 'country = "'.$country.'"';
+ 			
+ 			if ( trim($city) != ''){
+ 				$locationClauseArray[] = 'city = "'.$city.'"';
+ 			}
+ 				
+ 			if ( trim($region) != ''){
+ 				$locationClauseArray[] = 'region = "'.$region.'"';
+ 			}
+ 		}
+ 		
+ 		if ( sizeof($locationClauseArray) > 0 ){
+ 			return join(' AND ', $locationClauseArray);
+ 		}
+ 		
+ 		return '';
+ 		
+ 	}
+ 	
+ 	function get($post_id){
+ 		$post = parent::get($post_id);
+ 		$post->main_media = $this->postMediaDAO->getMainMediaByPostId($post->post_id);
+ 		return $post;
+ 	}
+ 	
+ 	function getTrendingNow($city = '', $region = '', $country = '', $start = 0, $size = 4){
+ 		$locationClauseArray = $this->getWhereLocationClause($city, $region, $country);
+ 		
+ 		$query = 'SELECT * FROM Post WHERE 
+ 					post_id in (SELECT post_id FROM Post_Vote 
+					WHERE date_vote > DATE_SUB(NOW(), INTERVAL 12 HOUR)  '.($locationClauseArray != '' ? ' AND '.$locationClauseArray : '').'
+					GROUP BY post_id HAVING SUM(vote_type) > 0 
+					ORDER BY SUM(vote_type) DESC ) ORDER BY registration_date DESC LIMIT '.$start.','.$size;
+ 		$result = $this->QExec($query);
+ 		$posts = array();
+ 		while ( $post = mysql_fetch_object($result, $this->entity_name)){
+ 			$post->main_media = $this->postMediaDAO->getMainMediaByPostId($post->post_id);
+ 			$posts[] = $post;
+ 		}
+ 		return $posts;
+ 	}
+ 	
+ 	function getTodayNews(){
+//  		$locationClauseArray = $this->getWhereLocationClause($city, $region, $country);
+ 			
+ 		$query = 'SELECT p.*,category_name FROM Post p INNER JOIN Category c ON c.category_id = p.category_id  WHERE registration_date > "' . date('Y/m/d 00:00:00'). '" ORDER BY registration_date DESC';
+ 		$result = $this->QExec($query);
+ 		$posts = array();
+ 		while ( $post = mysql_fetch_object($result, $this->entity_name)){
+ 			$post->main_media = $this->postMediaDAO->getMainMediaByPostId($post->post_id);
+ 			$post->category = 
+ 			$posts[] = $post;
+ 		}
+ 		return $posts;
+ 	}
+ 	
+ 	function getLatestNewsWorld(){
+ 		$query = 'SELECT * FROM ' . $this->table_name . ' WHERE activated = 1 ORDER BY registration_date DESC LIMIT 4';
+ 		$result = $this->QExec($query);
+ 		$posts = array();
+ 		while ( $post = mysql_fetch_object($result, $this->entity_name)){
+ 			$post->main_media = $this->postMediaDAO->getMainMediaByPostId($post->post_id);
+ 			$posts[] = $post;
+ 		}
+ 		return $posts;
+ 	}
+ 	
+ 	function getLatestNewsByCategory($category_id, $start = 0, $size = 4){
+ 		$query = 'SELECT * FROM ' . $this->table_name . ' WHERE activated = 1 AND category_id = "'.$category_id.'" ORDER BY registration_date DESC LIMIT '.$start.','.$size;
+ 		$result = $this->QExec($query);
+ 		$posts = array();
+ 		while ( $post = mysql_fetch_object($result, $this->entity_name)){
+ 			$post->main_media = $this->postMediaDAO->getMainMediaByPostId($post->post_id);
+ 			$posts[] = $post;
+ 		}
+ 		return $posts;
+ 	}
+ 	
+ 	function getLatestNewsCountry($countryName){
+ 		$query = 'SELECT * FROM ' . $this->table_name . ' WHERE country = "'.$countryName.'" AND activated = 1 ORDER BY registration_date DESC LIMIT 4';
+ 		$result = $this->QExec($query);
+ 		$posts = array();
+ 		while ( $post = mysql_fetch_object($result, $this->entity_name)){
+ 			$post->main_media = $this->postMediaDAO->getMainMediaByPostId($post->post_id);
+ 			$posts[] = $post;
+ 		}
+ 		return $posts;
+ 	}
+ 	
+ 	function getLatestNewsByLocation($city = '', $region = '', $country = '',  $start = 0, $size = 21){
+ 		$locationClauseArray = $this->getWhereLocationClause($city, $region, $country);
+ 		$query = 'SELECT * FROM ' . $this->table_name . ' WHERE activated = 1 '.($locationClauseArray != '' ? ' AND '.$locationClauseArray : '').' ORDER BY registration_date DESC LIMIT '.$start.','.$size;
+ 		$result = $this->QExec($query);
+ 		$posts = array();
+ 		while ( $post = mysql_fetch_object($result, $this->entity_name)){
+ 			$post->main_media = $this->postMediaDAO->getMainMediaByPostId($post->post_id);
+ 			$post->relative_date = DatetimeFilters::relative_time($post->registration_date);
+ 			$posts[] = $post;
+ 		}
+ 		return $posts;
+ 	}
+ 	
+ 	function getLatestNewsCity($countryName, $regionName, $cityName){
+ 		$query = 'SELECT * FROM ' . $this->table_name . ' WHERE  country = "'.$countryName.'"  AND region = "'.$regionName.'"  AND city = "'.$cityName.'"  AND activated = 1 ORDER BY registration_date DESC LIMIT 4';
+ 		$result = $this->QExec($query);
+ 		$posts = array();
+ 		while ( $post = mysql_fetch_object($result, $this->entity_name)){
+ 			$post->main_media = $this->postMediaDAO->getMainMediaByPostId($post->post_id);
+ 			$post->relative_date = DatetimeFilters::relative_time($post->registration_date);
+ 			$posts[] = $post;
+ 		}
+ 		return $posts;
+ 	}
+ 	
+ 	function getPostMostViewedWorld($hours = 12){
+ 		$query = 'SELECT * FROM ' . $this->table_name . ' WHERE activated = 1 AND registration_date > DATE_SUB(NOW(), INTERVAL '.$hours.' HOUR) ORDER BY views DESC, post_id DESC LIMIT 4';
+ 		$result = $this->QExec($query);
+ 		$posts = array();
+ 		while ( $post = mysql_fetch_object($result, $this->entity_name)){
+ 			$post->main_media = $this->postMediaDAO->getMainMediaByPostId($post->post_id);
+ 			$post->relative_date = DatetimeFilters::relative_time($post->registration_date);
+ 			$posts[] = $post;
+ 		}
+ 		return $posts;
+ 	}
+ 	
+ 	function getPostMostViewedCountry($countryName){
+ 		$query = 'SELECT * FROM ' . $this->table_name . ' WHERE country = "'.$countryName.'" AND activated = 1 ORDER BY views DESC, post_id DESC LIMIT 4';
+ 		$result = $this->QExec($query);
+ 		$posts = array();
+ 		while ( $post = mysql_fetch_object($result, $this->entity_name)){
+ 			$post->main_media = $this->postMediaDAO->getMainMediaByPostId($post->post_id);
+ 			$post->relative_date = DatetimeFilters::relative_time($post->registration_date);
+ 			$posts[] = $post;
+ 		}
+ 		return $posts;
+ 	}
+ 	
+ 	function getPostMostViewedCity($countryName, $regionName, $cityName){
+ 		$query = 'SELECT * FROM ' . $this->table_name . ' WHERE country = "'.$countryName.'"  AND region = "'.$regionName.'"  AND city = "'.$cityName.'"  AND activated = 1 ORDER BY views DESC, post_id DESC LIMIT 4';
+ 		$result = $this->QExec($query);
+ 		$posts = array();
+ 		while ( $post = mysql_fetch_object($result, $this->entity_name)){
+ 			$post->main_media = $this->postMediaDAO->getMainMediaByPostId($post->post_id);
+ 			$post->relative_date = DatetimeFilters::relative_time($post->registration_date);
+ 			$posts[] = $post;
+ 		}
+ 		return $posts;
+ 	}
+ 	
+ 	function getPostByCategory($category_id, $city = '', $region = '', $country = '',  $start = 0, $size = 21){
+ 		$locationClauseArray = $this->getWhereLocationClause($city, $region, $country);
+ 		$query = 'SELECT * FROM ' . $this->table_name . ' WHERE category_id="'.$category_id.'" '.($locationClauseArray != '' ? ' AND '.$locationClauseArray : '').' AND activated = 1 ORDER BY registration_date DESC LIMIT '.$start.','.$size;
+ 		$result = $this->QExec($query);
+ 		$posts = array();
+ 		while ( $post = mysql_fetch_object($result, $this->entity_name)){
+ 			$post->main_media = $this->postMediaDAO->getMainMediaByPostId($post->post_id);
+ 			$post->relative_date = DatetimeFilters::relative_time($post->registration_date);
+ 			$posts[] = $post;
+ 		}
+ 		return $posts;
+ 	}
+ 	
+ 	function getCountPostByCategory($category_id, $city = '', $region = '', $country = ''){
+ 		$locationClauseArray = $this->getWhereLocationClause($city, $region, $country);
+ 		$query = 'SELECT count(*) as amount FROM ' . $this->table_name . ' WHERE category_id="'.$category_id.'" '.($locationClauseArray != '' ? ' AND '.$locationClauseArray : '').' AND activated = 1';
+ 		$result = $this->QExec($query);
+ 		if ( mysql_num_rows($result) > 0){
+ 			return mysql_result($result, 0, 'amount');
+ 		}
+ 		return 0;
+ 	}
+ 	
+ 	function getPostByUser($user_id){
+ 		$query = 'SELECT * FROM ' . $this->table_name . ' WHERE user_id="'.$user_id.'" AND activated = 1 ORDER BY registration_date DESC';
+ 		$result = $this->QExec($query);
+ 		$posts = array();
+ 		while ( $post = mysql_fetch_object($result, $this->entity_name)){
+ 			$post->main_media = $this->postMediaDAO->getMainMediaByPostId($post->post_id);
+ 			$post->relative_date = DatetimeFilters::relative_time($post->registration_date);
+ 			$posts[] = $post;
+ 		}
+ 		return $posts;
+ 	}
+ 	
+ 	function getPostByCity($countryName, $regionName, $cityName){
+ 		$query = 'SELECT * FROM ' . $this->table_name . ' WHERE country="'.$countryName.'" AND region="'.$regionName.'" AND city="'.$cityName.'" AND activated = 1 ORDER BY registration_date DESC LIMIT 21';
+ 		$result = $this->QExec($query);
+ 		$posts = array();
+ 		while ( $post = mysql_fetch_object($result, $this->entity_name)){
+ 			$post->main_media = $this->postMediaDAO->getMainMediaByPostId($post->post_id);
+ 			$post->relative_date = DatetimeFilters::relative_time($post->registration_date);
+ 			$posts[] = $post;
+ 		}
+ 		return $posts;
+ 	}
+ 	
+ 	function getPostByCountry($countryName){
+ 		$query = 'SELECT * FROM ' . $this->table_name . ' WHERE country="'.$countryName.'" AND activated = 1 ORDER BY registration_date DESC LIMIT 21';
+ 		$result = $this->QExec($query);
+ 		$posts = array();
+ 		while ( $post = mysql_fetch_object($result, $this->entity_name)){
+ 			$post->main_media = $this->postMediaDAO->getMainMediaByPostId($post->post_id);
+ 			$post->relative_date = DatetimeFilters::relative_time($post->registration_date);
+ 			$posts[] = $post;
+ 		}
+ 		return $posts;
+ 	}
+ 	
+ 	function getPostByWorld(){
+ 		$query = 'SELECT * FROM ' . $this->table_name . ' WHERE activated = 1 ORDER BY registration_date DESC LIMIT 21';
+ 		$result = $this->QExec($query);
+ 		$posts = array();
+ 		while ( $post = mysql_fetch_object($result, $this->entity_name)){
+ 			$post->main_media = $this->postMediaDAO->getMainMediaByPostId($post->post_id);
+ 			$post->relative_date = DatetimeFilters::relative_time($post->registration_date);
+ 			$posts[] = $post;
+ 		}
+ 		return $posts;
+ 	}
+ 	
+ 	function get24HourPostByWorld($start =0, $size = 20){
+ 		$query = 'SELECT * FROM ' . $this->table_name . ' WHERE activated = 1 AND registration_date > DATE_SUB(NOW(), INTERVAL 24 HOUR) ORDER BY registration_date DESC LIMIT '.$start.','.$size;
+ 		$result = $this->QExec($query);
+ 		$posts = array();
+ 		while ( $post = mysql_fetch_object($result, $this->entity_name)){
+ 			$post->main_media = $this->postMediaDAO->getMainMediaByPostId($post->post_id);
+ 			
+ 			$posts[] = $post;
+ 		}
+ 		return $posts;
+ 	}
+ 	
+ 	function getCount24HourPostByWorld(){
+ 		$query = 'SELECT count(*) as amount FROM ' . $this->table_name . ' WHERE activated = 1 AND registration_date > DATE_SUB(NOW(), INTERVAL 24 HOUR) ORDER BY registration_date DESC';
+ 		$result = $this->QExec($query);
+ 		if ( mysql_num_rows($result) > 0){
+ 			return mysql_result($result, 0, 'amount');
+ 		}
+ 		return 0;
+ 	}
+ 	
+ 	function updateView($post_id, $views = 1){
+ 		$query = 'UPDATE ' . $this->table_name . ' SET views = views + '. $views . ' WHERE post_id="'.$post_id.'" LIMIT 1';
+ 		$result = $this->QExec($query);
+ 		return mysql_affected_rows() > 0;
+ 	}
+ 	
+ 	function removeDuplicatePostFromArray($arrayPosts){
+ 		$newArray = array();
+ 		foreach ( $arrayPosts as $key => $value ){
+ 			$newArray[$value->post_id] = $value;
+ 		}
+ 		return $newArray;
+ 	}
+ 	
+ }
+?>

@@ -1,0 +1,14 @@
+<div class="row-fluid">
+	<div class="g-plusone" data-size="medium"></div>
+	<a href="https://twitter.com/share" class="twitter-share-button" data-lang="en">Tweet</a>
+	<div class="fb-like" data-href="{{page.location}}" data-send="false" data-layout="button_count" data-width="450" data-show-faces="false"></div>
+	<div class="voteComponent">
+		Votes:
+		<a href="/news/{{post.post_id}}/up" class="voteUp"><img src="/_assets/images/arrow_up.png" /></a>
+		<a href="/news/{{post.post_id}}/down" class="voteDown"><img src="/_assets/images/arrow_down.png" /></a>
+		( <span class="voteNumber">{{post.votes}}</span> )
+	</div>
+	<div class="inappropriateComponent">
+		<a href="/news/{{post.post_id}}/inappropriate">mark as inappropriate</a>
+	</div>
+</div>

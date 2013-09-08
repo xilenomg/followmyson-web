@@ -1,0 +1,27 @@
+<?php
+ class PostViewDAO extends DatabaseAccessObject{
+ 	
+ 	public $table_name = "Post_View";
+ 	public $entity_name = "PostView";
+ 	
+ 	function PostViewDAO(){
+ 		parent::__construct();
+ 	}
+ 	
+ 	function getGroupedByNewsUntilPostViewId($postViewId){
+ 		$query = 'SELECT count(*) as count, post_id FROM '. $this->table_name . ' WHERE '. strtolower($this->table_name). '_id <= ' . $postViewId . ' GROUP BY post_id';
+ 		return $this->QExec($query);
+ 	}
+ 	
+ 	function getAllUntilId($postViewId){
+ 		$query = 'SELECT * FROM '.$this->table_name.' WHERE '. strtolower($this->table_name). '_id <= "'.$postViewId.'" ORDER BY '. strtolower($this->table_name). '_id DESC LIMIT 1';
+ 		return $this->QExec($query);
+ 	}
+ 	
+ 	function deleteAllUntilId($postViewId){
+ 		$query = 'DELETE FROM '.$this->table_name.' WHERE '. strtolower($this->table_name). '_id <= "'.$postViewId.'"';
+ 		return $this->QExec($query);
+ 	}
+ 	
+ }
+?>

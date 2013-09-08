@@ -1,0 +1,13 @@
+<?php
+require_once("../_config/_config.php");
+header('Content-type: text/xml');
+
+$postDAO = new PostDAO();
+$posts = $postDAO->getTodayNews();
+
+$pagina['posts'] = $posts;
+
+#renderizando
+$h2o = new h2o('../_templates/rss/basicRss.html');
+echo $h2o->render($pagina);
+?>

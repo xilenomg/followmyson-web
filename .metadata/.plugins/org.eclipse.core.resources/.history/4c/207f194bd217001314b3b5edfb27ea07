@@ -1,0 +1,4 @@
+RewriteEngine On
+
+RewriteRule ^postLocation.php$ /_controller/UserSetLocationController.php [QSA,L]
+RewriteRule ^getLocation.php$ /_controller/UserSetLocationController.php [QSA,L]

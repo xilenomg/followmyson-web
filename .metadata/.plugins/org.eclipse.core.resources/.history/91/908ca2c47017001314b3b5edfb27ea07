@@ -1,0 +1,40 @@
+<?php
+
+class Message{
+	
+	public static function getMessage($messageCode){
+		if ( self::$messages[$messageCode] ){
+			return  self::$messages[$messageCode];
+		}
+	}
+	
+	private static $messages = array(
+			//sign up
+			'signup_user_success' => 'You are now part of YouJour.com. Sign in now and enjoy.',
+			'signup_user_error' => 'We couldn\'t complete you sign up. Try again',
+			'signup_user_password_match' => 'Your password doesn\'t match',
+			'signup_user_exists' => 'This user already exists',
+			
+			//sign in
+			'user_signin_empty' => 'You have to fill it with valid user/password',
+			'user_signin_doesnt_exist' => 'No user found for this user/password combination',
+			
+			//news
+			'news_edit_success' => 'You have been successfully edited the news',
+			'news_delete_successfully' => 'News has been deleted successfully',
+			'news_delete_error' => 'News could NOT deleted. Try again',
+			
+			//new vote
+			'news_vote_not_logged_in' => 'You must be logged in  to vote',
+			'news_vote_successfully' => 'Your vote has been counted',
+			
+			//region
+			'region_new_defined' => 'Region successfully changed'
+	);
+
+}
+	
+
+
+
+?>

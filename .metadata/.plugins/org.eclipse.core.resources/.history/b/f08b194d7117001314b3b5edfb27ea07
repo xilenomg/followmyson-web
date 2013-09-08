@@ -1,0 +1,19 @@
+<?php
+require_once("../_config/_config.php");
+
+if ( !$sessionManager-> isLoggedIn(true) ){
+	Util::redirect("/");
+}
+
+$facebook->destroySession();
+
+if (isset($_COOKIE['uid'])){
+	$userDAO = new UserDAO();
+	$user = $userDAO->get($_COOKIE['uid']);
+	if ( $user ){
+		$user->facebook_token = '';
+		$userDAO->save($user);
+		Util::redirect('/user/'.$_COOKIE['uid']);
+	}
+}
+?>

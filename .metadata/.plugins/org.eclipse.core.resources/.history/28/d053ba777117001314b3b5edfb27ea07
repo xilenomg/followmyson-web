@@ -1,0 +1,135 @@
+{% extends 'base.html' %} 
+
+{% block conteudo %}
+<div class="row-fluid">
+	
+	<div class="indexPostsArea row-fluid redTheme">
+		<div class="row-fluid">
+			<h1 class="title">Daily</h1>
+		</div>
+		<div class="row-fluid">
+			<div class="span4">
+				{% with postsDaily.first as post %}
+					{% include '_templates/components/index_news.html' %}
+				{% endwith %}
+			</div>
+			<hr class="visible-phone" />
+			<div class="span4">
+				{% with postsDaily.1 as post %}
+					{% include '_templates/components/index_news_small.html' %}
+				{% endwith %}
+				<hr />
+				{% with postsDaily.2 as post %}
+					{% include '_templates/components/index_news_small.html' %}
+				{% endwith %}
+				<hr />
+				{% with postsDaily.3 as post %}
+					{% include '_templates/components/index_news_small.html' %}
+				{% endwith %}
+			</div>
+			<hr class="visible-phone" />
+			<div class="span4">
+				{% with postsDaily.4 as post %}
+					{% include '_templates/components/index_news_small.html' %}
+				{% endwith %}
+				<hr />
+				{% with postsDaily.5 as post %}
+					{% include '_templates/components/index_news_small.html' %}
+				{% endwith %}
+				<hr />
+				{% with postsDaily.6 as post %}
+					{% include '_templates/components/index_news_small.html' %}
+				{% endwith %}
+			</div>
+			
+		</div>
+	</div>
+	
+	<hr class="rowSeparator" />
+	
+	<div class="row-fluid grayTheme">
+		<div class="row-fluid">
+			<h1 class="title">Trending Now</h1>
+		</div>
+		<div class="row-fluid">
+			<div class="span4">
+				{% with postsTrendingNow.0 as post %}
+					{% include '_templates/components/index_news_small.html' %}
+				{% endwith %}
+			</div>
+			<hr class="visible-phone" />
+			<div class="span4">
+				{% with postsTrendingNow.1 as post %}
+					{% include '_templates/components/index_news_small.html' %}
+				{% endwith %}
+			</div>
+			<hr class="visible-phone" />
+			<div class="span4">
+				{% with postsTrendingNow.2 as post %}
+					{% include '_templates/components/index_news_small.html' %}
+				{% endwith %}
+			</div>
+		</div>
+	</div>
+	
+	<hr class="rowSeparator" />
+	
+	<div class="row-fluid greenTheme">
+		<div class="row-fluid">
+			<h1 class="title">Business</h1>
+		</div>
+		<div class="row-fluid">
+			<div class="span4">
+				{% with postsBusiness.0 as post %}
+					{% include '_templates/components/index_news_small.html' %}
+				{% endwith %}
+			</div>
+			<hr class="visible-phone" />
+			<div class="span4">
+				{% with postsBusiness.1 as post %}
+					{% include '_templates/components/index_news_small.html' %}
+				{% endwith %}
+			</div>
+			<hr class="visible-phone" />
+			<div class="span4">
+				{% with postsBusiness.2 as post %}
+					{% include '_templates/components/index_news_small.html' %}
+				{% endwith %}
+			</div>
+		</div>
+	</div>
+	
+	<hr class="rowSeparator" />
+	
+	<div class="row-fluid orangeTheme">
+		<div class="row-fluid">
+			<h1 class="title">Sports</h1>
+		</div>
+		<div class="row-fluid">
+			<div class="span4">
+				{% with postsSports.0 as post %}
+					{% include '_templates/components/index_news_small.html' %}
+				{% endwith %}
+			</div>
+			<hr class="visible-phone" />
+			<div class="span4">
+				{% with postsSports.1 as post %}
+					{% include '_templates/components/index_news_small.html' %}
+				{% endwith %}
+			</div>
+			<hr class="visible-phone" />
+			<div class="span4">
+				{% with postsSports.2 as post %}
+					{% include '_templates/components/index_news_small.html' %}
+				{% endwith %}
+			</div>
+		</div>
+	</div>
+	
+</div>
+
+
+
+
+
+{% endblock %}

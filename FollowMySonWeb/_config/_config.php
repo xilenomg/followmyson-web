@@ -1,0 +1,43 @@
+<?php
+error_reporting(E_ERROR | E_WARNING | E_PARSE | E_NOTICE);
+ini_set('display_errors', 'On');
+
+date_default_timezone_set('UTC');
+
+ini_set('default_charset', 'utf-8');
+
+$config_dir_path = dirname(__FILE__);
+// echo $_SERVER["SERVER_NAME"];
+// exit;
+if ( $_SERVER["SERVER_NAME"] == "followmyson.dataminas.com.br" ){
+	define('SERVER_ENV','production');
+	require_once $config_dir_path. '/production.php';
+}
+else{
+	define('SERVER_ENV','development');
+	require_once $config_dir_path. '/development.php';
+}
+
+define('SESSION_TIME', time() + 60 * 60 * 24 * 15);
+define('SESSION_EXPIRED_TIME', time() - (60 * 60 * 24 * 15));
+define('SESSION_PATH', '/');
+
+require_once $config_dir_path.'/variables.php';
+
+define('H2O_ROOT', '_');
+
+$sessionManager = new SessionManager();
+
+$pageInfo = array(
+					'name' => 'not-defined',
+					'url' => URL.'/'.$_SERVER['REQUEST_URI'],
+					'path' => PATH,
+					'baseURL' => URL
+				 );
+
+$pagina['page'] = $pageInfo;
+
+
+require PATH . '/h2o.php';
+
+?>

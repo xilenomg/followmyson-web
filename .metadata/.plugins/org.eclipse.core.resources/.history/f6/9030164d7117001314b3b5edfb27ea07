@@ -1,0 +1,40 @@
+<?php
+require_once("../_config/_config.php");
+
+$categoryDAO = new CategoryDAO();
+$categories = $categoryDAO->getAllToMenu();
+
+if ( isset($_POST) && sizeof($_POST) > 0 ){
+	setcookie('cityName', $_POST['city'], SESSION_TIME, SESSION_PATH);
+	setcookie('regionName', $_POST['region'], SESSION_TIME, SESSION_PATH);
+	setcookie('countryName', $_POST['country'], SESSION_TIME, SESSION_PATH);
+	setcookie('rbi', 1, SESSION_TIME, SESSION_PATH);
+	
+	if ( $sessionManager-> isLoggedIn(false) ){
+		$userDAO = new UserDAO();
+		$user = $userDAO->get($_COOKIE['uid']);
+		if ( $user ){
+			$user->current_city = $_POST['city'];
+			$user->current_region = $_POST['region'];
+			$user->current_country = $_POST['country'];
+			$userDAO->save($user);
+		}
+	}
+	
+	
+	Util::redirect("/?message=region_new_defined");
+}
+
+
+# obrigatorio em todas as paginas
+$config['title'] = "Choose a region";
+$pagina['config'] = $config;
+$pagina['categories'] = $categories;
+
+$pageInfo['name'] = 'about';
+$pagina['page'] = $pageInfo;
+
+#renderizando
+$h2o = new h2o('../_templates/web/chooseRegion.html');
+echo $h2o->render($pagina);
+?>

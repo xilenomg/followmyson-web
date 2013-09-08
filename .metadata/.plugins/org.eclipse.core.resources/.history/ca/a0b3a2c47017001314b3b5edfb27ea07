@@ -1,0 +1,16 @@
+<?php
+ class PostMedia extends DatabaseModel{
+ 	
+ 	public $TYPE_IMAGE = 'image';
+ 	public $TYPE_VIDEO = 'video';
+ 	
+	public $post_media_id = null;
+	public $post_id = null;
+	public $media_name = null;
+	public $type = null;
+	public $date_post = null;
+	
+	public $db_fields = array('post_media_id', 'post_id','media_name', 'date_post', 'type');
+	
+ }
+?>

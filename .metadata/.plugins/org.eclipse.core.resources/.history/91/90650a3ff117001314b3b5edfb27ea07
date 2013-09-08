@@ -1,0 +1,127 @@
+<?php
+class DatabaseAccessObject{
+	
+	private $databaseConnection;
+	public $table_name = null;
+	public $entity_name = null;
+		
+	function DatabaseAccessObject(){
+		
+		if ( $this->table_name == null || trim($this->table_name) == '') {
+			die('DatabaseAccessObject must has self::$table_name: <b>' . get_class($this) . '</b> DAO');
+		}	
+
+		if ( $this->entity_name == null || trim($this->entity_name) == '') {
+			die('DatabaseAccessObject must has self::$entity_name: <b>' . get_class($this) . '</b> DAO');
+		}
+		
+		$this->databaseConnection = DatabaseConnection::singleton();
+	}
+	
+	function get($entity_id){
+		$query = 'SELECT * FROM '.$this->table_name.' WHERE '. strtolower($this->table_name). '_id = "'.$entity_id.'" LIMIT 1';
+		$exec = $this->QExec($query);
+		$obj = mysql_fetch_object($exec, $this->entity_name);
+		return $obj;
+	}
+	
+	function getLast(){
+		$query = 'SELECT * FROM '.$this->table_name.' ORDER BY '. strtolower($this->table_name). '_id DESC LIMIT 1';
+		$exec = $this->QExec($query);
+		$obj = mysql_fetch_object($exec, $this->entity_name);
+		return $obj;
+	}
+	
+	function getFirst(){
+		$query = 'SELECT * FROM '.$this->table_name.' ORDER BY '. strtolower($this->table_name). '_id ASC LIMIT 1';
+		$exec = $this->QExec($query);
+		$obj = mysql_fetch_object($exec, $this->entity_name);
+		return $obj;
+	}
+	
+	function getByField($entity_field, $entity_value){
+		$entity_value = addslashes($entity_value);
+		$query = 'SELECT * FROM '.$this->table_name.' WHERE '. $entity_field. ' = "'.$entity_value.'" LIMIT 1';
+		$exec = $this->QExec($query);
+		$obj = mysql_fetch_object($exec, $this->entity_name);
+		return $obj;
+	}
+	
+
+
+	function deleteById($entity_id){
+		$query = 'DELETE FROM '.$this->table_name.' WHERE '. strtolower($this->table_name). '_id="'.$entity_id.'" LIMIT 1';
+		$exec = $this->QExec($query);
+		if (mysql_affected_rows() > 0){
+			return true;
+		}
+		return false;
+	}
+	
+	function save($entity){
+		$setSQL = array();
+		$length = sizeof($entity->db_fields);
+		$entity_id = null;
+		
+		foreach($entity->db_fields as $field){
+			//echo $field .' => '. $entity->$field;
+			if ( $field == strtolower(get_class($entity).'_id')){
+				$entity_id = $entity->$field;
+			}
+			if ( $entity->$field == null ){
+				$setSQL[] = $field . ' = NULL';
+			}
+			else{
+				$setSQL[] = $field . '="'.addslashes($entity->$field).'"';
+			}
+		}
+		
+		$query = 'UPDATE '.$this->table_name.' SET '.join(',', $setSQL). ' WHERE '. strtolower($this->table_name). '_id = "'. $entity_id .'" LIMIT 1';
+		$exec = $this->QExec($query);
+		if (mysql_affected_rows($this->databaseConnection->getMysqlConnection()) > 0){
+			return true;
+		}
+		return false;
+	}
+	
+	function create($entity){
+		
+		$length = sizeof($entity->db_fields);
+		$cont = 0;
+		$entity_id = null;
+	
+		$fieldSQL = array();
+		$valueSQL = array();
+		
+		foreach($entity->db_fields as $field){
+			if ( $field == strtolower(get_class($entity).'_id')){
+				continue;
+			}
+			$fieldSQL[] = $field;
+			if ( $entity->$field == null ){
+				$valueSQL[] = 'NULL';
+			}
+			else{
+				$valueSQL[] = '"'.addslashes($entity->$field).'"';
+			}
+		}
+		
+		$query = 'INSERT INTO '.$this->table_name.' ('. join(',', $fieldSQL) .') VALUES ('. join(',', $valueSQL) .')';
+		$exec = $this->QExec($query);
+		
+		if ( mysql_affected_rows($this->databaseConnection->getMysqlConnection()) > 0 ){
+			return mysql_insert_id($this->databaseConnection->getMysqlConnection());
+		}
+		return false;
+	}
+	
+	function QExec($que){
+		$exec = mysql_query($que, $this->databaseConnection->getMysqlConnection());
+		if ( !$exec &&  ((SERVER_ENV == 'development') ||  (isset($_GET[MODERATOR_KEY]) && $_GET[MODERATOR_KEY] == MODERATOR_VALUE) )){
+			echo $que;
+			die(mysql_errno() . ' - ' . mysql_error());
+		}
+		return $exec;
+	}
+}		
+?>

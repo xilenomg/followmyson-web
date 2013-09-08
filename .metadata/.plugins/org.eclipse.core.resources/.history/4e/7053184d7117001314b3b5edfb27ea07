@@ -1,0 +1,43 @@
+<?php
+require_once("../_config/_config.php");
+
+$categoryDAO = new CategoryDAO();
+$categories = $categoryDAO->getAllToMenu();
+
+$page = isset($_GET['page']) && $_GET['page'] > 0 ? $_GET['page'] : 1;
+$start = ($page - 1) * NEWS_MAX_PAGE;
+
+$postDAO = new PostDAO();
+$postsByWorld = $postDAO->get24HourPostByWorld($start, NEWS_MAX_PAGE);
+
+//pagination
+$countPostsByWorld = $postDAO->getCount24HourPostByWorld();
+$countPages = ceil($countPostsByWorld/NEWS_MAX_PAGE);
+
+$pagesArray = array();
+for ( $i = 0; $i < $countPages; $i++){
+	$newPaginationPage = new PaginationPage();
+	$newPaginationPage->page_num = $i+1;
+	$newPaginationPage->page_link = '/world'.($i > 0 ?'/'.($i+1) : '');
+
+	if ( $i+1 == $page || ($page == 0 && $i == $page) ){
+		$newPaginationPage->active = true;
+	}
+
+	$pagesArray[] = $newPaginationPage;
+}
+
+$pagina['pagination'] = array('current_page' => $page, 'pages' => $pagesArray);
+
+
+
+# obrigatorio em todas as paginas
+$config['title'] = 'News from all the World';
+$pagina['config'] = $config;
+$pagina['categories'] = $categories;
+$pagina['postsByWorld'] = $postsByWorld;
+
+#renderizando
+$h2o = new h2o('../_templates/web/newsWorld.html');
+echo $h2o->render($pagina);
+?>

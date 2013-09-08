@@ -1,0 +1,142 @@
+var YOUJOUR = YOUJOUR || {};
+
+YOUJOUR.postMediaController = (function() {
+	var self = {};
+
+	self.thumbnail_model = '<li class="span4"><img class="thumbnail" /></li>';
+	self.thumbnail_video_model = '<li class="span4"><iframe src="//www.youtube.com/embed/{{media.media_name}}" height="200" frameborder="0" allowfullscreen></iframe></li>';
+	
+	self.init = function() {
+		self.addSubmitImageListener();
+		self.addSubmitVideoListener();
+		self.deleteMediaListener();
+	};
+	
+	self.afterDeleteError = function(response){
+		if ( response.type == 'error'){ 
+			$("#output").html(response.message);
+		}
+		
+		else{
+			alert('Something wrong happened on our server');
+		}
+	};
+	
+	self.afterDeleteSuccess = function(response)  {
+		response = $.parseJSON(response);
+		var success = false;
+		if ( this.data ){
+			var data = this.data.split('=');
+			if ( data.length == 2){
+				if ( response.type == 'success'){
+					success = true;
+					$('.postMedia' + data[1]).remove();
+				}
+			}
+		}
+		
+		if (!success){
+			if ( response.message ){
+				self.afterDeleteError(response);
+			}
+		}
+		
+		
+		
+	};
+	
+	self.afterVideoSuccess = function(response)  {
+	    var response = $.parseJSON(response);
+	    try{
+		    if ( typeof response.type !== 'undefined'){
+		    	if ( response.type === "success" ){
+			    	var ul = $("ul.thumbnails");
+			    	ul.append(self.thumbnail_video_model);
+			    	var lastThumbnailModel = ul.children('li:last');
+			    	if ( lastThumbnailModel.length > 0 ){
+			    		var videoLastThumbnailModel = lastThumbnailModel.children('iframe');
+			    		videoLastThumbnailModel.attr('src', '//www.youtube.com/embed/' + response.message);
+			    		$(".alert").hide();
+			    	}
+			    	$('#output').html('');  // reset form
+		    	}
+		    	else{
+		    		$('#output').html(response.message);
+		    	}
+		    }
+	    } catch(err){
+	    } finally{
+		    $('#UploadFormVideo').resetForm();  // reset form
+		    $('#UploadFormVideo #SubmitButton').removeAttr('disabled'); //enable submit button
+	    }
+	};
+	
+	self.afterImageSuccess = function(response)  {
+	    var response = $.parseJSON(response);
+	    try{
+		    if ( typeof response.type !== 'undefined'){
+		    	if ( response.type === "success" ){
+			    	var ul = $("ul.thumbnails");
+			    	ul.append(self.thumbnail_model);
+			    	var lastThumbnailModel = ul.children('li:last');
+			    	if ( lastThumbnailModel.length > 0 ){
+			    		var imageLastThumbnailModel = lastThumbnailModel.children('img');
+			    		imageLastThumbnailModel.attr('src', response.message);
+			    		$(".alert").hide();
+			    	}
+			    	$('#output').html('');  // reset form
+		    	}
+		    	else{
+		    		$('#output').html(response.message);
+		    	}
+		    }
+	    } catch(err){
+	    } finally{
+		    $('#UploadFormImage').resetForm();  // reset form
+		    $('#UploadFormImage #SubmitButton').removeAttr('disabled'); //enable submit button
+	    }
+	};
+	
+	self.addSubmitImageListener = function(){
+		$('#UploadFormImage').on('submit', function(e) {
+	        e.preventDefault();
+	        $('#UploadFormImage #SubmitButton').attr('disabled', ''); // disable upload button
+	        //show uploading message
+	        $("#output").html('<div style="padding:10px"><img src="/_assets/images/loading.gif" alt="Please Wait"/> <span>Uploading...</span></div>');
+	        $(this).ajaxSubmit({
+	            success:  YOUJOUR.postMediaController.afterImageSuccess //call function after success
+	        });
+	    });
+	};
+	
+	self.addSubmitVideoListener = function(){
+		$('#UploadFormVideo').on('submit', function(e) {
+	        e.preventDefault();
+	        $('#SubmitButton').attr('disabled', ''); // disable upload button
+	        //show uploading message
+	        $("#output").html('<div style="padding:10px"><img src="/_assets/images/loading.gif" alt="Please Wait"/> <span>Uploading...</span></div>');
+	        $(this).ajaxSubmit({
+	            success:  YOUJOUR.postMediaController.afterVideoSuccess //call function after success
+	        });
+	    });
+	};
+	
+	self.deleteMediaListener = function(){
+		$('.deleteButton').on('click', function(e){
+			$.ajax({
+				type: "POST",
+				data: {
+					post_media_id: $(this).attr('data-post-media-id')
+				},
+				url: '/news/edit/deleteMedia',
+				datatype: 'json',
+				success: YOUJOUR.postMediaController.afterDeleteSuccess,
+				error: YOUJOUR.postMediaController.afterDeleteError
+			});
+		});
+	};
+
+	return self;
+}());
+
+YOUJOUR.postMediaController.init();

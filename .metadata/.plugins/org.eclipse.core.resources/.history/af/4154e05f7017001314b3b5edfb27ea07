@@ -1,0 +1,87 @@
+<?php
+require_once("../../_config/_config.php");
+error_reporting(E_ERROR | E_WARNING | E_PARSE | E_NOTICE);
+ini_set('display_errors', 'On');
+$postDAO = new PostDAO();
+
+// $posts = $postDAO->getTrendingNow();
+
+//Posts Trending Now
+$posts = $postDAO->getTrendingNow($cookieCityName, $cookieRegionName, $cookieCountryName, 0, 3);
+// if ( sizeof($posts) < 3 && $cookieRegionName != ''){
+$posts = array_merge($posts, $postDAO->getTrendingNow('', '', $cookieCountryName, 0, 3));
+// 	if ( sizeof($posts) < 3 && $cookieCountryName != ''){
+$posts = array_merge($posts, $postDAO->getTrendingNow('', '', '', 0, 3));
+// 	}
+// }
+
+$posts = $postDAO->removeDuplicatePostFromArray($posts);
+usort($posts, array('Post', 'sortNewsByRegistrationDate'));
+
+// if ( sizeof($posts) < 3 ){
+$posts = array_merge($posts, $postDAO->getPostMostViewedWorld(1));
+// }
+
+
+echo 'A postar: ' . sizeof($posts);
+
+// Google shorten url
+$key = 'AIzaSyC_8yQQyoiqk7bqwns0c8CcHxrkb2qEWGI';
+$googer = new GoogleUrlApi($key);
+
+
+// Twitter Connection Info
+$twitter_access_token = '1597066518-gSTsZZFKExZ8oLRYxxQOnxyxrzN3KcSYx7GCNse';
+$twitter_access_token_secret = 'eOKjDUCcfqJ1FsAXCZhf2ySIrJ9w0RHpsFhbhRl1w';
+$twitter_consumer_key = 'iPAjoijkJPSWPdRejZJAdA';
+$twitter_consumer_secret = 'Y7k96Rgu6QUb7sbqY7lSPoTIInnvrf9hADUXxXwTRL4';
+
+// Connect to Twitter
+$connection = new TwitterOAuth($twitter_consumer_key, $twitter_consumer_secret, $twitter_access_token, $twitter_access_token_secret);
+ 
+if ( $posts ){
+	$token = FACEBOOK_TOKEN_POST;
+	foreach ($posts as $key => $post){
+		if ( $post->title_general == '' || $post->summary_general == '' || $post->posted_on_facebook == '1' ){
+			continue;
+		}
+		$locationString = $post->country . ($post->region != '' ? ' - ' .$post->region : ''). ' - '. $post->city . ': ';
+		
+		echo '['.$locationString.']';
+		if (trim($locationString) == trim(' - : ')){
+			$locationString = '';
+		}
+		
+		$message = $locationString . $post->title_general . ' - '. $post->summary_general .' #youjour #trendingNow';
+		$link = URL.'/news/'.$post->post_id;
+
+		$postOnFacebook = array('access_token' => $token, 'link' => $link, 'message' => $message);
+		try{
+			
+			$res = $facebook->api('/youjourcom/feed','POST',$postOnFacebook);
+			
+			//preparing the tweet
+			$shortDWName = $googer->shorten("https://www.youjour.com/news/".$post->post_id);
+			$len = strlen($shortDWName);
+			
+			
+			$tweet = substr($locationString . $post->title_general,0, 140-$len) . ' '. $shortDWName;
+			
+			
+			$content = $connection->post('statuses/update', array('status' => $tweet));
+			
+			$post->posted_on_facebook = true;
+			$postDAO->save($post);
+			var_dump($res);
+			exit;
+		} catch (Exception $e){
+			$post->posted_on_facebook = true;
+			$postDAO->save($post);
+			echo $e->getMessage();
+		}
+		
+	}
+}
+
+
+?>

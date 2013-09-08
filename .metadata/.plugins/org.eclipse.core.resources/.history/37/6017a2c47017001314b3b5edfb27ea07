@@ -1,0 +1,11 @@
+<?php
+class  PostInappropriate extends DatabaseModel{
+	public $post_inappropriate_id = null;
+	public $post_id = null;
+	public $user_id = null;
+	public $date_mark = null;
+	
+	public $db_fields = array('post_inappropriate_id', 'post_id','user_id','date_mark');
+	
+ }
+?>

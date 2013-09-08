@@ -1,0 +1,151 @@
+{% extends 'base.html' %} 
+
+{% block conteudo %}
+<div class="postsArea row-fluid">
+
+	<div class="span12">
+		<h3>Terms & Conditions</h3>
+		<p>Welcome to the YouJour website. In order to use our Site, you must agree to our Terms of Use &dash; The Terms of Use are our "rules of the road"  &dash; they are important and contain many legal disclosures that you should read carefully - including terms of sale that apply when you buy something through the Site and other terms that specify permissible uses of the Site. If you have any questions about these Terms of Use contact us here: youjour@youjour.com</p>
+		<p>These Terms & Conditions were last updated on June 28, 2013</p>
+		
+		<h3>ACCEPTANCE OF TERMS OF USE</h3>
+		<p>YouJour operates this website, www.youjour.com, the mobile and touch versions and any individual sites, city-specific, or other area-specific sites we have now or in the future. The website and links contained within or otherwise available through external hyperlinks within our Site (the "Microsites") will be collectively referred to as the "Site" in these Terms of Use. By using our Site and YouJour services through the Site, you ("you" or, "End User") agree to these Terms of Use, our Privacy Statement, and any additional terms applicable to certain programs in which you may elect to participate or with respect to any Microsite, as any of the same may exist from time to time (collectively, the "Terms of Use" or "Agreement"). <b>IF YOU DO NOT AGREE TO THE TERMS OF THIS AGREEMENT, IMMEDIATELY STOP ACCESSING THE SITE AND DO NOT USE ANY YOUJOUR SERVICE OFFERED THROUGH THE SITE.</b></p>
+		
+		<h3>1. Permitted Uses</h3>
+		<p>The Site provides an interactive online service operated by
+			YouJour, consisting primarily in publishing latest news that happened around the world.
+			As a condition of your
+			use of this Site, you agree that:</p>
+		<ul>
+			<li>You are an individual person at least 18 years of age;</li>
+			<li>You possess the authority to create a binding legal obligation;</li>
+			<li>Your use of this Site will at all times comply with the terms of this Agreement;</li>
+			<li>If you elect to create an account:</li>
+			<ul>
+				<li>You may create only one account for your personal use;</li>
+				<li>You must safeguard your password and supervise the use of
+					your account, and understand and agree that you are responsible for
+					your own use and the use of your account by anyone you allow to
+					access it.</li>
+			</ul>
+			<li>You have the right to provide any and all information you
+				submit to the Site, the information is only about yourself, and all
+				such information is accurate, true, current and complete.</li>
+		</ul>
+
+		<h3>2. Availability of the Site</h3>
+		<p>You acknowledge that there may be interruptions in service or
+			events that are beyond our control. While we use reasonable efforts
+			to keep the Site accessible, the Site may be unavailable from time to
+			time for any reason including, without limitation, routine
+			maintenance. You understand and acknowledge that due to circumstances
+			both within and outside of our control Site access may be
+			interrupted, suspended or terminated. YouJour.com retains the right at
+			our sole discretion to deny service, or access to the Site to anyone
+			or an account, at any time and for any reason.</p>
+
+		<h3>3. Ownership of the Site</h3>
+		<p>The infrastructure used to provide this website, is proprietary to us and 
+			the contents ("news") are from users that posted using our tools.</p>
+
+		<h3>5. Your Conduct on our Site</h3>
+		<p>Our Site is private property. All interactions on this Site
+			must be lawful and must comply with these Terms of Use. To the extent
+			your conduct (as judged by us in our sole discretion), restricts or
+			inhibits any other user from using or enjoying any part of this Site,
+			we may limit your privileges on the Site and seek other remedies.
+			PLEASE DO NOT ENGAGE IN ANY OF THE FOLLOWING ACTIVITIES, they are
+			prohibited on the Site and constitute express violations of this
+			Agreement:</p>
+
+		<ul>
+			<li>Submitting any purposely inaccurate information, committing
+				fraud or falsifying information in connection with your YouJour
+				account or in order to create multiple YouJour accounts;</li>
+			<li>Attempting to, or actually accessing data not intended for
+				you, such as logging into a server or an account which you are not
+				authorized to access;</li>
+			<li>Attempting to scan, or test the security or configuration of
+				the Site or to breach security or authentication measures without
+				proper authorization;</li>
+			<li>Tampering or interfering with the proper functioning of any
+				part, page or area of the Site and any and all functions and
+				services provided by YouJour;</li>
+			<li>Attempting to interfere with service to any user in any
+				manner, including, without limitation, by means of submitting a
+				virus to our Site, or attempts at overloading, &quot;flooding&quot;,
+				&quot;spamming&quot;, &quot;mail bombing&quot; or &quot;crashing&quot; the Site;</li>
+			<li>Using the Site or any of its contents to advertise or
+				solicit, for any other commercial, political or religious purpose,
+				or to compete, directly or indirectly with YouJour;</li>
+			<li>Reselling or repurposing your access to the Site or any
+				purchases made through the Site;</li>
+			<li>Using the Site or any of its resources to solicit Site End
+				Users to become
+				users or partners of other online or offline services directly or
+				indirectly competitive or potentially competitive with YouJour,
+				including without limitation, aggregating current or previously
+				offered deals;</li>
+			<li>Accessing, monitoring or copying any content or information
+				from this Site using any robot, spider, scraper or other automated
+				means or any manual process for any purpose without our express
+				written permission;</li>
+			<li>Violating the restrictions in any robot exclusion headers on
+				this Site or bypassing or circumventing other measures employed to
+				prevent or limit access to this Site;</li>
+			<li>Taking any action that places excessive demand on our
+				services, or imposes, or may impose an unreasonable or
+				disproportionately large load on our servers or other portion of our
+				infrastructure (as determined in our sole discretion);</li>
+			<li>Aggregating any live or post-feature content or other
+				information from the Site (whether using links or other technical
+				means or physical records associated with purchases made through
+				this Site) with material from other sites or on a secondary site
+				without our express written permission.</li>
+			<li>Acting illegally or maliciously against the business
+				interests or reputation of YouJour or our services;
+				or</li>
+			<li>Hyperlinking to the Site from any other website without our
+				initial and ongoing consent.</li>
+		</ul>
+
+		<h3>6. Creating an Account on our Site</h3>
+		<p>If you create an account on our Site, you may only create and
+			hold one account that you are solely responsible for managing. Your
+			account is non-transferrable and may not be sold, combined or
+			otherwise shared with any other person. If you violate any of these
+			limitations we may terminate your account. If we
+			terminate your account, you may not re-enroll or join under a new
+			account unless we formally invite you. If you commit fraud or falsify
+			information in connection with your use of the Site or in connection
+			with your YouJour account, your account will be terminated
+			immediately and we reserve the right to hold you liable for any and
+			all damages that we suffer, to pursue legal action through relevant
+			local and national law enforcement authorities and to notify your
+			Internet Service Provider of any fraudulent activity we associate
+			with you or your use of the Site.</p>
+
+		<h3>8. Modification of this Agreement</h3>
+		<p>We reserve the right at all times to discontinue or modify any
+			part of this Agreement as we deem necessary or desirable. If we make
+			changes that materially affect your use of the Site or our services
+			we will notify you by sending you an e-mail to the e-mail address
+			that is registered with your account and/or by posting notice of the
+			change on the Site. We suggest that you revisit our Terms of Use from time to
+			time to ensure that you stay informed of any such notifications of
+			changes to the Site. Your use of the Site after we update these Terms
+			of Use will constitute acceptance of the modified Terms of Use.</p>
+
+		<h3>9. Copyright and Trademarks.</h3>
+		<p>Everything located on or in this Site is the exclusive property
+			of YouJour or is being used with permission. ANY COPYING,
+			DISTRIBUTING, TRANSMITTING, POSTING, LINKING, DEEP LINKING, OR
+			OTHERWISE MODIFYING OF THIS SITE OR ANY OF THE MICROSITES WITHOUT THE
+			EXPRESS WRITTEN PERMISSION OF YOUJOUR IS PROHIBITED. Any violation
+			of this requirement may result in a copyright, trademark or other
+			intellectual property right infringement that may subject you to
+			civil and/or criminal penalties.</p>
+	</div>
+	
+</div>
+{% endblock %}

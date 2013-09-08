@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>{% if config.title != "" %}{{config.title}}{% else
+	%}Being a global Journalist with us{% endif %}</title>
+<link href="/_assets/css/web-main.css" rel="stylesheet" media="screen" />
+</head>
+
+<body>
+	<header id="main">
+		<h1>FollowMySon</h1>
+	</header>
+	{% block content %} {% endblock %}
+
+	<script src="/_assets/javascript/jquery.min.js"></script>
+	{% block javascript %} {% endblock %}
+</body>
+</html>

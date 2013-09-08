@@ -1,0 +1,23 @@
+<?php
+require_once("../../_config/_config.php");
+$postViewDAO = new PostViewDAO();
+$postDAO = new PostDAO();
+
+$lastView = $postViewDAO->getLast();
+if ( $lastView ){
+	$result = $postViewDAO->getGroupedByNewsUntilPostViewId($lastView->post_view_id);
+	if ( $result ) {
+		$willBeAffected = mysql_num_rows($result);
+		while ( $row = mysql_fetch_array($result) ){
+			$postDAO->updateView($row['post_id'], $row['count']);
+		}
+		
+		$postViewDAO->deleteAllUntilId($lastView->post_view_id);
+		
+		echo 'Total of views read: '. $willBeAffected;
+	}
+}
+else{
+	echo 'Nothing to update';
+} 
+?>

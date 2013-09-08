@@ -1,0 +1,19 @@
+<?php
+require_once("../_config/_config.php");
+
+$categoryDAO = new CategoryDAO();
+$categories = $categoryDAO->getAllToMenu();
+
+
+# obrigatorio em todas as paginas
+$config['title'] = "404";
+$pagina['config'] = $config;
+$pagina['categories'] = $categories;
+
+$pageInfo['name'] = 'about';
+$pagina['page'] = $pageInfo;
+
+#renderizando
+$h2o = new h2o('../_templates/error/404.html');
+echo $h2o->render($pagina);
+?>

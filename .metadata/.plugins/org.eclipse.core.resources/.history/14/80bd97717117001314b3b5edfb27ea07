@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+	<channel>
+		<title>YouJour - Being global journalist</title>
+		<link>{{page.baseURL}}</link>
+		<atom:link href="{{page.baseURL}}/rss.xml" rel="self" type="application/rss+xml" />
+		<description></description>
+		<language>en-US</language>
+		<copyright>All rights reserved.</copyright>
+		<lastBuildDate>{% now D, d M Y H:i:s O %}</lastBuildDate>
+		<docs>http://blogs.law.harvard.edu/tech/rss</docs>
+		<image>
+		<url>
+		{{page.baseURL}}/_assets/images/logo.png
+		</url>
+		<title>YouJour - Being global journalist</title>
+		<link>{{page.baseURL}}</link>
+		<width>144</width>
+		<height>60</height>
+		<description/>
+		</image>
+		{% for key,post in posts %}
+		<item>
+			<title>
+			{% if post.title_inner %}{{post.title_inner}}{% else %}{{post.title_general}}{% endif %}
+			</title>
+			<link>
+			{{page.baseURL}}/news/{{post.post_id}}
+			</link>
+			<guid isPermaLink="true">{{page.baseURL}}/news/{{post.post_id}}</guid>
+			<description>
+				{% if post.summary_general %}{{post.summary_general}}{% else %}{{post.summary_inner}}{% endif %}
+			</description>
+			<category>{{post.category_name}}</category>
+			<pubDate>{{post.registration_date | date "D, d M Y H:i:s O"}}</pubDate>
+		</item>
+		{% endfor %}
+	</channel>
+</rss>

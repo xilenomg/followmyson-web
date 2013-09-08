@@ -1,0 +1,36 @@
+{% extends '../web/base.html' %} 
+
+{% block conteudo %}
+<div class="postsArea row-fluid">
+
+	<div class="span12">
+		
+		<form class="form-signin" method="post">
+			<h2>Sign Up Form</h2>
+			<div class="row-fluid">
+				<h6>Full Name *</h6>
+				<input type="text" name="user_name" class="input-xlarge" placeholder="Full Name" autocomplete="off">
+				<h6>Email address *</h6>
+				<input type="text" name="user_email" class="input-xlarge" placeholder="Email address" autocomplete="off">
+				<h6>Password *</h6>
+		        <input type="password" name="user_password" class="input-xlarge" placeholder="Password" autocomplete="off">
+		        <h6>Confirm Password *</h6>
+		        <input type="password" name="user_confirm_password" class="input-xlarge" placeholder="Confirm Password" autocomplete="off">
+	        </div>
+	        <div class="row-fluid">
+	        	<span class="span12" style='margin-bottom:10px;'>By clicking Sign Up, you agree and have read <br /> our <a href="/terms_and_conditions">Terms & Conditions</a> and <a href="/privacy_policy">Privacy Policy</a> .</span>
+
+		        <button type="submit" id="userSignUpFormSubmit" class="btn btn-primary btnSubmitWithErrorMessage">Sign up for YouJour.com</button>
+		        <div class="errorMessage">Check if all fields marked as required * are not empty.</div>
+		    </div>
+        </form>
+	</div>
+	
+</div>
+{% endblock %}
+
+
+
+{% block javascript %}
+	<script type="text/javascript" src="/_assets/javascript/controller/userSignUpFormController.js"></script>
+{% endblock %}

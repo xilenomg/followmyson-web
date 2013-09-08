@@ -1,0 +1,264 @@
+<?php
+if ( !function_exists('pre')){
+
+	function pre($val){
+		return '<pre>'.(var_export($val, true)).'</pre><hr/>';
+	}
+
+}
+
+if ( !function_exists('getMonth')){
+	function getMonth($month){
+		switch(strtolower($month)){
+			case 'jan': return 1;
+			case 'feb': return 2;
+			case 'mar': return 3;
+			case 'apr': return 4;
+			case 'may': return 5;
+			case 'jun': return 6;
+			case 'jul': return 7;
+			case 'aug': return 8;
+			case 'sep': return 9;
+			case 'oct': return 10;
+			case 'nov': return 11;
+			case 'dec': return 12;
+				
+		}
+
+	}
+}
+
+if ( !function_exists('file_get_contents_curl')){
+	function file_get_contents_curl($url) {
+		echo "<h2>Abrindo novo curl</h2>";
+		$url = trim($url);
+		$ch = curl_init();
+		curl_setopt($ch, CURLOPT_HEADER, 0);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); //Set curl to return the data instead of printing it to the browser.
+		curl_setopt($ch,CURLOPT_USERAGENT,'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/28.0.1500.95 Safari/537.36');
+		curl_setopt($ch, CURLOPT_URL, $url);
+		curl_setopt($ch, CURLOPT_AUTOREFERER, true);
+		//curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+	
+		$data = curl_exec($ch);
+// 		$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+// 		var_dump($httpCode);
+// 		var_dump($data);
+// 		$error = curl_error($ch);
+// 		if (strlen($error) > 0) {
+// 			echo "<br>Error is : ". $error;
+// 			return false;
+// 		}
+		curl_close($ch);
+		echo "<h2>FECHANDO novo curl</h2>";
+		return $data;
+	}
+}
+
+
+require_once("../../_config/_config.php");
+error_reporting(E_ERROR | E_WARNING | E_PARSE | E_NOTICE);
+ini_set('display_errors', 'On');
+
+$categoryList = array();
+$categoryList[] = array('http://esporte.uol.com.br/futebol/ultimas/index.xml','Sports');
+// $categoryList[] = array('','');
+// $categoryList[] = array('','');
+// $categoryList[] = array('','');
+// $categoryList[] = array('','');
+// $categoryList[] = array('','');
+
+foreach ( $categoryList as $categoryItem ){
+	
+	
+	$url = $categoryItem[0];
+	$category_name = $categoryItem[1];
+	
+	echo '<h1>'.$category_name.'</h1><h6>'.$url.'</h6>';
+	
+	$categoryDAO = new CategoryDAO();
+	$category = $categoryDAO->getByField('category_name', $category_name);
+	if ( !$category ){
+		$category = new Category();
+		$category->category_id = '';
+	}
+	
+	
+	$content = file_get_contents($url);
+	$content = str_replace('<![CDATA[', '', $content);
+	$content = str_replace(']]>', '', $content);
+	
+	$content = utf8_encode($content);
+	
+	$saw = new Nokogiri($content);
+	
+	$items = $saw->get('item')->toArray();
+	
+	$count = 0;
+	foreach($items as $item) {
+// 		echo pre($item);
+		$post = new Post();
+		$title = trim(str_replace("\t", '', $item['title'][0]['#text']));
+		
+		//Tue, 6 Aug 2013 00:56:24 +0000
+		$pattern1 = '/(.*) \((.*)\/(.*)\/(.*)-(.*)h(.*)\)/i';
+		$replacement1 = '$1';
+		$title = preg_replace($pattern1, $replacement1, $title);
+		
+		echo $post->title_general = $title;
+		$postDAO = new PostDAO();
+		$postCheck = $postDAO->getByField('title_general', $post->title_general);
+		
+		if ( $postCheck ){
+			echo 'J‡ existe';
+			echo '<hr />';
+// 			break;
+			continue;
+		}
+		
+		
+//		$post->summary_general = strip_tags($item['content'][0]['#text']);
+		
+		$string = trim(str_replace("\t", '', $item['title'][0]['#text']));
+		echo '<br /><br />';
+
+		//Tue, 6 Aug 2013 00:56:24 +0000
+		$pattern = '/(.*) \((.*)\/(.*)\/(.*)-(.*)h(.*)\)/i';
+		$replacement = '20$4/$3/$2 $5:$6:00';
+		echo $dados = preg_replace($pattern, $replacement, $string);
+		
+		$data_hora = split(' ', $dados);
+		$hora = split(':', $data_hora[1]);
+		$hora[0] = $hora[0] - 3;
+		
+		$data = split('/', $data_hora[0]);
+		
+		echo '<br /><br />';
+	
+		echo $post->registration_date = date('Y/m/d H:i:s', mktime($hora[0], 
+				$hora[1], 
+				$hora[2], 
+				$data[1], 
+				$data[2], 
+				$data[0]));
+		echo '<br /><br />';
+// 		exit;
+		echo $post->source = $item['#text'][0];
+		
+		
+// 		echo $post->source = "http://noticias.terra.com.br/brasil/policia/cinco-sao-assassinados-dentro-de-casa-de-pms-em-sp,2cbd2d7c19050410VgnVCM20000099cceb0aRCRD.html";
+		echo '<br /><br />';
+		$content2 = file_get_contents_curl($post->source);
+		
+		
+		$saw_inner = new Nokogiri($content2);
+		$items_inner = $saw_inner->get('#texto p')->toHTML();
+		
+		foreach ( $items_inner as $key => $paragrafo ){
+			if ( strpos($paragrafo, ' Tags : ') < 1 ){
+				$items_inner[$key] = trim($paragrafo);
+			}
+			else{
+				unset($items_inner[$key]);
+			}
+		}
+		
+		
+		$post->post_text = '<p>'.str_replace('[$$P$$]','</p><p>',strip_tags(join('[$$P$$]',$items_inner))).'</p>';
+	
+		
+		
+		$title_inner = $saw_inner->get('#conteudo-principal h1')->toHTML();
+		if ( isset( $title_inner[0] )){
+			$post->title_inner = strip_tags($title_inner[0]);
+		}
+		else{
+			$title_inner = $saw_inner->get('#texto h1')->toHTML();
+			$post->title_inner = strip_tags($title_inner[0]);
+		}
+		
+		
+		
+// 		$summary_inner = $saw_inner->get('.materia-titulo h2')->toHTML();
+		
+// 		$post->summary_inner = strip_tags($summary_inner[0]);
+		
+		$post->category_id = $category->category_id;
+		
+		$post->activated = true;
+		
+		$items_image = $saw_inner->get('#texto img')->toArray();
+		$postMedia = null;
+		$medias = array();
+		if ( sizeof($items_image) > 0 ) {
+			foreach ( $items_image as $item_image ){
+				echo 'getting image<br/>';
+				$url = $item_image['src'];
+				$image_name_array = split('/', $item_image['src']);
+				$image_name = $image_name_array[sizeof($image_name_array) - 1];
+				
+				$img = PATH.'/_uploads/news/tmp/' . $image_name;
+				file_put_contents($img, file_get_contents($url));
+				
+				
+				//IMAGE
+				$extensionArray = explode('.', $img);
+				$extension = $extensionArray[sizeof($extensionArray)-1];
+				
+				$imageName = sha1($img . rand(0,50000) . date('YmdHis')) . '.' . $extension;
+				$imagePath = Util::createImagePath($imageName);
+				
+				$imageSize = getimagesize($img);
+				$proporcao = $imageSize[0]/$imageSize[1];
+				echo 'Image proportion: '. $proporcao.'</br >';
+				if ( $proporcao > 0.33 && $proporcao < 2.2 && $imageSize[0] >= 300){
+				
+					if ( copy($img, $imagePath.$imageName) ){
+						echo 'image copied';
+						unlink( $img );
+						$size = getimagesize($imagePath.$imageName);
+						$originalHeight = $size[1];
+						$newHeight = Imagem::getAltura($imagePath.$imageName, 500);
+						$resizeImageResult = Imagem::geraMiniatura($imagePath.$imageName,500,$newHeight);
+					
+						if ( $resizeImageResult != null ){
+							$postMedia = new PostMedia();
+							$postMedia->media_name = $imageName;
+							$postMedia->type = $postMedia->TYPE_IMAGE;
+							$postMedia->date_post = date('Y/m/d H:i:s');
+							$medias[] = $postMedia;
+						}
+					}
+				}
+			}
+			
+			//END IMAGE
+		}
+		
+		$post_id = $postDAO->create($post);
+		
+		
+		if ( $post_id){
+			if ( sizeof($medias) > 0 && $post_id ){
+				$postMediaDAO = new PostMediaDAO();
+				foreach($medias as $media ){
+					$media->post_id = $post_id;
+					
+					$media_id = $postMediaDAO->create($media);
+					if ( $media_id ){
+						echo 'image saved';
+					}
+				}
+			}
+			echo 'salvo';
+			
+			echo '<hr />';
+			$count++;
+		}
+		if ( $count > 10 ){
+			break;
+		}
+		
+	}
+}
+

@@ -1,0 +1,39 @@
+{% extends 'base.html' %} 
+
+{% block content %}
+<div class="row-fluid">
+	
+	<div class="changeRegionArea span12">
+		<form method="post">
+			<div class="row-fluid">
+				<div id="panel">
+			      <input id="address" type="text" value="{% if cookies.cityName != '' %}{{cookies.cityName}}{% if cookies.regionName %}, {{cookies.regionName}}{% endif %}, {{cookies.countryName}}{% else %}San Francisco, California{% endif %}">
+			      <input type="button" value="Geocode" onclick="YOUJOUR.chooseRegionController.codeAddress();">
+			    </div>
+			    <div id="map-canvas"></div>	
+	    	</div>
+	    	
+	    	<div class="row-fluid">
+			    <div class="span3 textCenter"><b>City:</b> <span class="city">{% if cookies.cityName != '' %}{{cookies.cityName}}{% else %}not defined yet{% endif %}</span></div>
+			    <div class="span3 textCenter"><b>Region:</b> <span class="region">{% if cookies.regionName != '' %}{{cookies.regionName}}{% else %}not defined yet{% endif %}</span></div>
+			    <div class="span3 textCenter"><b>Country:</b> <span class="country">{% if cookies.countryName != '' %}{{cookies.countryName}}{% else %}not defined yet{% endif %}</span></div>
+		    	<div class="span3 textCenter"><input type="submit" class="btn btn-primary" value="Use this location" /></div>
+		    </div>
+	    
+		</form>
+	</div>
+	
+</div>
+
+{% endblock %}
+
+
+{% block javascript %}
+<script src="//maps.googleapis.com/maps/api/js?v=3.exp&sensor=false"></script>
+<script src="/_assets/javascript/mapsController.js"></script>
+<script>
+$(document).ready(function(){
+	FMS.mapsController.initialize();
+});
+</script>
+{% endblock %}

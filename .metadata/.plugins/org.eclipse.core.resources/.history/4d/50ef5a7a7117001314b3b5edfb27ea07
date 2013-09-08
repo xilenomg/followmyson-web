@@ -1,0 +1,17 @@
+{% extends 'base.html' %} 
+
+{% block conteudo %}
+<div class="postsArea row-fluid">
+
+	<div class="span12">
+		<h2>About</h2>
+		
+		<p>Around the world we have so many people sharing informations, news, ideas etc through social network. But doing this could not reach everyone that wants to see it.</p>
+		<p>Well, YouJour comes to help your news to reach everyone. You can post some news, be seen by your followers and share them in social network.</p>
+		<p>A question: what's the difference?</p>
+		<p>We will notify some users that we think it's rellevant for them. It will also be shared by our Facebook account if we think it so especial for all the world.</p>
+		<p>Contributing with us will help to create a better world. 
+	</div>
+	
+</div>
+{% endblock %}

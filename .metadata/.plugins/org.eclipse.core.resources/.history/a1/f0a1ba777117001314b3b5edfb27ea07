@@ -1,0 +1,30 @@
+{% extends 'base.html' %} 
+
+{% block conteudo %}
+<div class="postsArea row">
+
+	<div class="span12">
+		<ul class="breadcrumb">
+			<li><a href="/">Home</a> <span class="divider">/</span></li>
+			<li class="active">World</li>
+		</ul>
+		<div class="row">
+			{% if postsByWorld.length > 0 %}
+				{% for key, post in postsByWorld %}
+				<div class="span3">
+					{% include '_templates/components/category_news.html' %}
+				</div>
+				{% endfor %}
+			{% else %}
+				<div class="alert alert-block span5">No results found for the world</div>
+			{% endif %}
+		</div>
+	</div>
+
+</div>
+
+
+{% include '_templates/components/pagination.html' %}
+
+
+{% endblock %}

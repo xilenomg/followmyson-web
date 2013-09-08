@@ -1,0 +1,56 @@
+<?php
+ class Post extends DatabaseModel{
+	public $post_id;
+	public $legend;
+	public $title_general;
+	public $title_inner;
+	public $post_text;
+	public $registration_date;
+	public $updated_date;
+	public $summary_general;
+	public $summary_inner;
+	public $user_id;
+	public $views;
+	public $category_id;
+	public $category_name;
+	public $activated;
+	public $tags;
+	public $source;
+	public $votes;
+	public $posted_on_facebook;
+	public $medias;
+	public $main_media;	
+	
+	public $city;
+	public $region;
+	public $country;
+	
+	public $relative_date;
+	
+	public $db_fields = array(  'post_id',
+								'legend',
+								'title_general',
+								'title_inner',
+								'post_text',
+								'registration_date',
+								'user_id',
+								'views',
+								'category_id', 
+								'activated', 
+								'updated_date', 
+								'summary_general', 
+								'summary_inner', 
+								'source',
+								'posted_on_facebook',
+								'city',
+								'region', 
+								'country');
+	
+
+
+	static function sortNewsByRegistrationDate( $a, $b ) {
+		return $a->registration_date == $b->registration_date ? 0 : ( $a->registration_date > $b->registration_date ) ? -1 : 1;
+	}
+	
+}
+?>

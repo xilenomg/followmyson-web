@@ -1,0 +1,24 @@
+<?php
+require_once("../_config/_config.php");
+
+if ( !$sessionManager-> isLoggedIn(true) ){
+	Util::redirect("/news/".$_GET['post_id'].'?message=news_vote_not_logged_in');
+}
+
+$postVoteDAO = new PostVoteDAO();
+
+if ( isset( $_GET['vote_type'], $_GET['post_id']) && ($_GET['vote_type'] == '1' || $_GET['vote_type'] == '-1') ){
+	
+	$postVote = new PostVote();
+	$postVote->post_id = $_GET['post_id'];
+	$postVote->vote_type = $_GET['vote_type'];
+	$postVote->user_id = $_COOKIE['uid'];
+	$postVote->date_vote = date('Y/m/d H:i:s');
+	$postVoteDAO->deleteUserVoteByPost($_COOKIE['uid'], $_GET['post_id']);
+	$postVoteDAO->create($postVote);
+	
+	Util::redirect('/news/' . $_GET['post_id'].'?message=news_vote_successfully');
+}
+
+Util::redirect('/');
+?>

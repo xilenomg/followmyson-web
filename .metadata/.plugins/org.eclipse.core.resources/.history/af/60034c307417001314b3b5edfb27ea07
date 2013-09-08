@@ -1,0 +1,10 @@
+<?php
+class User extends DatabaseModel{
+	public $user_id = null;
+	public $user_name = null;
+	
+	public $db_fields = array('user_id','user_name','user_email','user_password','last_login','registration_date',
+			'birthday','hometown','mobile_phone','language','gender','private_user_email',
+			'private_mobile_phone','private_birthday', 'facebook_uid', 'facebook_token','current_city','current_region','current_country', 'facebook_token_date');
+}
+?>

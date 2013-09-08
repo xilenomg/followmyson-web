@@ -1,0 +1,119 @@
+<?php
+ini_set('memory_limit', '-1');
+require_once("../_config/_config.php");
+
+if ( !$sessionManager-> isLoggedIn(true) ){
+	Util::redirect("/");
+}
+
+$categoryDAO = new CategoryDAO();
+$categories = $categoryDAO->getAllToMenu();
+
+if ( isset($_POST['title_inner']) ){
+	$postDAO = new PostDAO();
+	$post = new Post();
+	$post->title_general = trim($_POST['title_general']);
+	$post->title_inner = trim($_POST['title_inner']);
+	$post->post_text = strip_tags(trim($_POST['post_text']), '<br><b><i><strike><u><li><ul><ol><blockquote><a>');
+	$post->user_id = $_COOKIE['uid'];
+	$post->views = '0';
+	$post->category_id = $_POST['category'];
+	$post->summary_general = trim($_POST['summary_general']);
+	$post->summary_inner = trim($_POST['summary_inner']);
+	$post->activated = '0';
+	$post->source = $_POST['source'];
+	$post->registration_date = date('y-m-d H:i:s');
+	
+	$post->city = trim($_POST['city']);
+	$post->region = trim($_POST['region']);
+	$post->country = trim($_POST['country']);
+	
+	$postMedia = null;
+	
+	if (isset($_FILES['image']) && trim($_FILES['image']['name']) != ''){
+		
+		$extensionArray = explode('.', $_FILES['image']['name']);
+		$extension = $extensionArray[sizeof($extensionArray)-1];
+		
+		$imageName = sha1($_FILES['image']['name'] . rand(0,50000) . date('YmdHis')) . '.' . $extension;
+		$imagePath = Util::createImagePath($imageName);
+// 		if ( mkdir($imagePath, 0777, true) ){
+			if ( copy($_FILES['image']['tmp_name'], $imagePath.$imageName) ){
+				$size = getimagesize($imagePath.$imageName);
+				$originalHeight = $size[1];
+				$newHeight = Imagem::getAltura($imagePath.$imageName, 500);
+				$resizeImageResult = Imagem::geraMiniatura($imagePath.$imageName,500,$newHeight);
+
+				if ( $resizeImageResult != null ){
+					$postMedia = new PostMedia();
+					$postMedia->media_name = $imageName;
+					$postMedia->type = $postMedia->TYPE_IMAGE;
+					$postMedia->date_post = date('Y/m/d H:i:s');
+				}
+			}
+// 		}
+	}
+	
+	$post_id = $postDAO->create($post);
+	
+	if ($post_id != false){
+		//Save image
+		if ( $postMedia != null){
+			$postMediaDAO = new PostMediaDAO();
+			$postMedia->post_id = $post_id;
+			$postMediaDAO->create($postMedia);
+		}
+		//Tags
+		$tags = $_POST['tags'];
+		if (trim($tags) != ''){
+			$tags_array = explode(',', $tags);
+			
+			$size = sizeof($tags_array);
+			
+			if ($size > 0){
+				
+				for ( $i=0; $i < $size; $i++ ){
+					$tags_array[$i] = trim($tags_array[$i]);
+				}
+				
+				//Creating and getting tags_id
+				$tagDAO = new TagDAO();
+				$tags_id = $tagDAO->createOrGetId($tags_array);
+				
+				if ( $tags_id != null ){
+					$postTagDAO = new PostTagDAO();
+					foreach ($tags_id as $tag_id){
+						$postTag = new PostTag();
+						$postTag->post_id = $post_id;
+						$postTag->tag_id = $tag_id;
+						$postTagDAO->create($postTag);
+					}
+					
+				}
+				
+			}	
+		}
+		
+		Util::redirect('/news/edit/afterpost/'.$post_id);
+	}
+		
+	//Util::redirect('/');
+}
+
+/*
+ * Location
+ */
+$location = new Location();
+$location->getLocationByIp();
+$pagina['location'] = $location;
+
+
+# obrigatorio em todas as paginas
+$config['title'] = "Create your news";
+$pagina['config'] = $config;
+$pagina['categories'] = $categories;
+
+#renderizando
+$h2o = new h2o('../_templates/webuser/postCreateForm.html');
+echo $h2o->render($pagina);
+?>

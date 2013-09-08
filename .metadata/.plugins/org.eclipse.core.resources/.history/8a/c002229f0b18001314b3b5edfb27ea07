@@ -1,0 +1,65 @@
+var FMS = FMS || {};
+
+FMS.User = function(id, name, phone){
+	this.id = id;
+	this.name = name;
+	this.phone = phone;
+	this.userLocation = new FMS.UserLocation();
+	
+	this.getId = function(){
+		return id;
+	};
+	
+	this.getName = function(){
+		return this.name;
+	}
+	
+	this.getPhone = function(){
+		return this.phone;
+	};
+	
+	this.getMarker = function(){
+		return this.userLocation.marker;
+	}
+};
+
+
+FMS.UserLocation = function(user){
+	
+	var thisUserLocation = this;
+	var user = user;
+	
+	var marker;
+	
+	this.getUserLocation = function(){
+		$.ajax("/api/getLocation.php",{
+			dataType: "json",
+			type: "POST",
+			data:{"user_id" : user.getId()}
+		}).done(function(data){
+			marker = new google.maps.Marker({
+			    map: FMS.mapsController.map,
+			    title: data.user_id,
+			    position:  new google.maps.LatLng(data.latitude, data.longitude),
+			    draggable: false
+			});
+			
+		});
+	}
+	
+	this.getMarker = function(){
+		return marker;
+	}
+	
+	this.startLocating = function(){
+		thisUser.getUserLocation();
+		setInterval(function(){
+			thisUser.getUserLocation();
+		},5000);
+	}
+};
+
+$(document).ready(function(){
+	var user = new FMS.User(1, "Luis Perez", "+553183346577");
+	user.userLocation().startLocating();
+});

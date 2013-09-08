@@ -1,0 +1,9 @@
+
+var YOUJOUR = YOUJOUR || {};
+
+YOUJOUR.model = YOUJOUR.model || {};
+
+YOUJOUR.model.Facebook = {
+		appId: null,
+		secret: null
+}

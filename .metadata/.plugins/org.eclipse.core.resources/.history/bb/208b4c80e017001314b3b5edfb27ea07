@@ -1,0 +1,41 @@
+var FMS = FMS || {};
+
+FMS.mapsController = {
+	SAN_FRANCISCO: new google.maps.LatLng(37.77492950, -122.41941550),
+	map: null,
+	marker: null,
+	initialize: function(elementMap, markerPositionLatLng, markerDragendCallback, onCompleteCallback){
+		geocoder = new google.maps.Geocoder();
+		var latlng = typeof markerPositionLatLng == "undefined" || markerPositionLatLng == null ? this.SAN_FRANCISCO : markerPositionLatLng;
+		
+		var mapOptions = {
+			zoom: 17,
+			zoomControl: false,
+		    disableDefaultUI: true,
+			center: latlng,
+			scrollwheel: false,
+		    navigationControl: false,
+		    mapTypeControl: false,
+		    scaleControl: false,
+		    draggable: false,
+			mapTypeId: google.maps.MapTypeId.ROADMAP
+		}
+		
+		this.map = new google.maps.Map(elementMap, mapOptions);
+		
+		this.marker = new google.maps.Marker({
+		    map: this.map,
+		    position: latlng,
+		    draggable: false
+		});
+
+		
+		if ( typeof onCompleteCallback == "function") {
+			onCompleteCallback();
+		}
+	},
+	setMarkerLocation: function(latitude, longitude){
+		var newLatLng = new google.maps.LatLng(latitude, longitude);
+		this.marker.setPosition(newLatLng);
+	}
+};

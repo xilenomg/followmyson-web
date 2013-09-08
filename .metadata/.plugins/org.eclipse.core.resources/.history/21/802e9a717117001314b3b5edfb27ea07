@@ -1,0 +1,9 @@
+{% if pagination.pages.length > 1 %}
+<div>
+	<ul class="nav nav-pills">
+		{% for page in pagination.pages %}
+		<li><a href="{{page.page_link}}">{{page.page_num}}</a></li> {% endfor
+		%}
+	</ul>
+</div>
+{% endif %} 

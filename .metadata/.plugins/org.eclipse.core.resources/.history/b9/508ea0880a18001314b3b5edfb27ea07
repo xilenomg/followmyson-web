@@ -1,0 +1,6 @@
+RewriteEngine On
+
+RewriteRule ^api/postLocation.php$ /_controller/UserSetLocationController.php [QSA,L]
+RewriteRule ^api/getLocation.php$ /_controller/UserGetLocationController.php [QSA,L]
+RewriteRule ^api/createUser.php$ /_controller/UserCreateController.php [QSA,L]
+RewriteRule ^api/findUser.php$ /_controller/UserCreateController.php [QSA,L]

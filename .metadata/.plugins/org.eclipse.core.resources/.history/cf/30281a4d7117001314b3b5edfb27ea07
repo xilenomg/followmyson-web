@@ -1,0 +1,37 @@
+<?php
+require_once("../_config/_config.php");
+
+if ( !$sessionManager-> isLoggedIn(true) ){
+	Util::redirect("/");
+}
+
+if ( !isset($_GET['post_id']) ){
+	Util::redirect("/");
+}
+
+$postMediaDAO = new PostMediaDAO();
+$categoryDAO = new CategoryDAO();
+$categories = $categoryDAO->getAllToMenu();
+
+$postDAO = new PostDAO();
+
+$post = $postDAO->get($_GET['post_id']);
+$postMediaDAO = new PostMediaDAO();
+$post->medias = $postMediaDAO->getMediasByPostId($post->post_id);
+
+if ( $post == null || ( $post->user_id != $_COOKIE['uid']  && !$sessionManager->isAdmin() ) ){
+	Util::redirect("/");
+}
+
+
+# obrigatorio em todas as paginas
+$config['title'] = "Add medias";
+$pagina['config'] = $config;
+$pagina['categories'] = $categories;
+$pagina['afterpost'] = isset($afterpost) && $afterpost != 0 ? $afterpost : false;
+$pagina['post'] = $post;
+
+#renderizando
+$h2o = new h2o('../_templates/webuser/postAddMediaForm.html');
+echo $h2o->render($pagina);
+?>

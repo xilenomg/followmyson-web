@@ -1,0 +1,29 @@
+<?php
+class User extends DatabaseModel{
+	public $user_id = null;
+	public $user_name = null;
+	public $user_email = null;
+	public $user_password = null;
+	public $last_login = null;
+	public $registration_date = null;
+	public $birthday = null;
+	public $hometown = null;
+	public $mobile_phone = null;
+	public $language = null;
+	public $gender = null;
+	public $private_user_email;
+	public $private_mobile_phone;
+	public $private_birthday;
+	public $facebook_uid;
+	public $facebook_token;
+	public $facebook_token_date;
+	
+	public $current_city = null;
+	public $current_region = null;
+	public $current_country = null;
+	
+	public $db_fields = array('user_id','user_name','user_email','user_password','last_login','registration_date',
+			'birthday','hometown','mobile_phone','language','gender','private_user_email',
+			'private_mobile_phone','private_birthday', 'facebook_uid', 'facebook_token','current_city','current_region','current_country', 'facebook_token_date');
+}
+?>

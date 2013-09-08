@@ -1,0 +1,144 @@
+{% extends 'base.html' %} 
+
+{% block conteudo %}
+<div class="postsArea row-fluid">
+
+	<div class="span12">
+		<h3>Privacy Policy</h3>
+
+		<p>This Privacy Statement (&quot;Privacy Statement&quot;) explains how
+			YouJour.com (&quot;YouJour,&quot; &quot;us,&quot; &quot;our,&quot; and &quot;we&quot;) uses your
+			information and applies to all who use our Web site, mobile
+			applications, electronic services, social networking sites, or any
+			individual, business partner-specific,
+			city-specific, or other area-specific Web sites we offer that link to
+			or reference this Privacy Statement (collectively, the &quot;Site&quot;) and
+			when you receive electronic communications from us.</p>
+
+		<p>Please read this Privacy Statement carefully and review it
+			periodically for the latest information about our privacy practices.
+			By using the Site, you agree to the terms of this Privacy Statement.
+			If you do not agree with the practices described in this Privacy
+			Statement, please do not provide us with your personal information or
+			interact with the Site.</p>
+
+		<p>We will routinely update this Privacy Statement to clarify our
+			practices and to reflect new or different privacy practices, such as
+			when we add new services, functionality or features to the Site. If
+			we make any material changes we will notify you by email (sent to the
+			email address specified in your account) or by means of notice on the
+			Site prior to the change becoming effective. You can determine when
+			this Privacy Statement was last revised by referring to the date it
+			was &quot;Last Updated&quot; above. You can review the last version of this
+			Privacy Statement here:</p>
+			
+		<h3>1. Types of Information We Collect</h3>
+
+		<p>We will collect information, including Personal Information and
+			Non-Identifying Information, when you interact with us and the Site,
+			for example when you:</p>
+
+		<ul>
+			<li>access or use the Site;</li>
+			<li>register, subscribe, or create an account with YouJour;</li>
+			<li>open or respond to our e-mails;</li>
+			<li>provide information to enroll or participate in programs
+				provided on behalf of, or together with, Business Partners;</li>
+			<li>visit any page online that displays our ads or content;</li>
+			<li>purchase products or services on or through the Site;</li>
+			<li>connect or link to any Site via social networking sites;</li>
+			<li>post comments to Online Communities; and</li>
+			<li>This Privacy Statement does not apply to the collection of information in any way other than as listed above.</li>
+		</ul>
+		
+		<h3>2. 	How YouJour Uses Information</h3>
+		
+		<p>We may use information collected as described in this Privacy Statement to:</p>
+
+		<ul>
+			<li>Operate, maintain and improve the Site and our services;</li>
+			<li>Provide you with personalized ads and offers for products
+				and services from us and participating Business Partners;</li>
+			<li>Evaluate your eligibility for certain types of offers,
+				products or services that may be of interest to you, and analyze
+				advertising effectiveness;</li>
+			<li>Answer your questions and respond to your requests;</li>
+			<li>Perform analytics and conduct customer research;</li>
+			<li>Communicate and provide additional information that may be
+				of interest to you about YouJour and our Business Partners,
+				sometimes by combining your information with information from Other
+				Sources;</li>
+			<li>Send you reminders, technical notices, updates, security
+				alerts, support and administrative messages, service bulletins,
+				marketing messages, and requested information, including on behalf
+				of Business Partners;</li>
+			<li>Administer rewards, surveys, sweepstakes, contests, or other
+				promotional activities or events sponsored by us or our Business
+				Partners;</li>
+			<li>Manage our everyday business needs, such as administration
+				of the Site, forum management, fulfillment, analytics, fraud
+				prevention, and enforcement of our corporate reporting obligations
+				and Terms of Use, or to comply with the law; and to</li>
+			<li>Enhance other information we have about you directly or from
+				Other Sources to help us better understand you and determine your
+				interests.</li>
+		</ul>
+		
+		<h3>4. 	When and Why Youjour Discloses Information</h3>
+
+		<p>We may share your Personal
+			Information as required or permitted by law:</p>
+		<ul>
+			<li>with relevant Business Partners:</li>
+			<ul>
+				<li>with whom we jointly offer products and services;</li>
+				<li>to facilitate a direct relationship with you, including in
+					connection with any program we administer on behalf of the Business
+					Partner;</li>
+				<li>to enable electronic communications with you as part of
+					purchase, a sponsored reward, offer, contest, program, or other
+					activity in which you have elected to participate;</li>
+			</ul>
+			<li>to comply with legal orders and government requests, or as
+				needed to support auditing, compliance, and corporate governance
+				functions;</li>
+			<li>to combat fraud or criminal activity, and to protect our
+				rights or those of our Affiliates, users, and Business Partners, or
+				as part of legal proceedings affecting Youjour;</li>
+			<li>in response to a subpoena, or similar legal process,
+				including to law enforcement agencies, regulators, and courts in the
+				United States and other countries where we operate; or</li>
+			<li>with your consent.</li>
+		</ul>
+
+		<p>We encourage Business Partners to adopt and post privacy
+			policies. However, their use of Personal Information obtained through
+			Youjour is governed by their privacy policies and is not subject to
+			our control.</p>
+			
+		<p>We may also disclose Non-Identifiable Information:</p>
+
+		<ul>
+			<li>for the same reasons we might share Personal Information;</li>
+			<li>with Business Partners for their own analysis and research;</li>
+			<li>to facilitate targeted content and ads; or</li>
+			<li>with Third-Party Ad-Servers to place our ads and/or ads of
+				our merchants or Business Partners on the Site and on third-party
+				sites, and to analyze the effectiveness of those ads.</li>
+		</ul>
+		
+		<h3>6. 	Security of Personal Information</h3>
+
+		<p>Youjour has implemented an information security program that
+			contains administrative, technical and physical controls that are
+			designed to reasonably safeguard Personal Information.</p>
+
+		<h3>7. Contact Us</h3>
+		<p>Please contact us if you have any questions or comments about
+			our privacy practices or this Privacy Statement. You can reach us
+			online at youjour@youjour.com.</p>
+
+	</div>
+	
+</div>
+{% endblock %}

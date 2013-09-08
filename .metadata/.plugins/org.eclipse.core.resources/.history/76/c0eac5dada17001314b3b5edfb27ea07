@@ -1,0 +1,25 @@
+<?php
+ class UserLocationDAO extends DatabaseAccessObject{
+ 	
+ 	public $table_name = "UserLocation";
+ 	public $entity_name = "UserLocation";
+ 	
+ 	function UserLocationDAO(){
+ 		parent::__construct();
+ 	}
+ 	
+ 	function keepLastLocations($amount = 10){
+ 		$query = 'DELETE FROM `'.$table_name.'`
+					WHERE id NOT IN (
+					  SELECT id
+					  FROM (
+					    SELECT id
+					    FROM `'.$table_name.'`
+					    ORDER BY id DESC
+					    LIMIT 42 -- keep this many records
+					  ) foo
+					);';
+ 	}
+ 	
+ }
+?>

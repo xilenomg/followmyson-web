@@ -1,0 +1,58 @@
+{% extends 'base.html' %} 
+
+{% block conteudo %}
+<div class="postsArea row">
+
+	<div class="span12">
+		<ul class="breadcrumb">
+			<li><a href="/">Home</a> <span class="divider">/</span></li>
+			<li class="active">Learn more</li>
+		</ul>
+		<div>
+			<h2>Learn more how to become a global journalist</h2>
+			
+			<p>Dear guest,</p>
+			
+			<p>We're happy seeing you around here. It's because we want you to become a global journalist and seems you are interesed on that. Is it right?</p>
+			
+			<p>So, let me present YouJour for you.</p>
+			<hr />
+			<h3>What's is YouJour?</h3>
+			
+			<p>Well, YouJour idea came up when we realized that every single news we saw in the TV was "changed" by that channel and we got tired of that. But why? Well, I'm not saying that all of them change how the news should be, but most of them was doing that according with its political thought.</p>
+			
+			<p>So, after discussing with some friends (now part of this team), we decided to create a international way to share news. We could use Social Networks like Facebook, Twitter etc to share everything but we decide to create a best way to.</p>
+			<hr />
+			<h3>How YouJour works?</h3>
+			<p>YouJour is a nice tool to share news to all the world. We basically receive your news and show on our pages. </p>
+			<p>You might be asking yourself: Is only that? How do I get seen?</p>
+			<p>YouJour is divided to share you news to all the world, to your country and to your city. By time to time, we will improve the way how we share your news to all the world. We will use Social Network, allow following another users, things like that.</p>
+			<p>Our team will work every day to improve ourself.</p> 
+			
+			<hr />
+			
+			<h3>Would you like to start?</h3>
+			
+			<p>You can become a global journalist easily creating an account on the top of this page by clicking on Sign Up button</p>
+			
+			<p><img src="/_assets/images/learn_more/signup.jpg" alt="" class="thumbnail" /></p>
+			
+			<p>You are at sign up form page, right? We hope so! Quickly read our terms and fill up these fields and become a global journalist</p>
+			
+			<p><img src="/_assets/images/learn_more/signupform.jpg" alt="" class="thumbnail" /></p>
+			<hr />
+			<h3>You are few steps from start sharing news to the world</h3>
+			
+			<p>Considering you have done well until now, you might be in our home page. It's time to sign in. Type your credentials and click on sign in button<p>
+			<p><img src="/_assets/images/learn_more/home.jpg" alt="" class="thumbnail" /></p>
+			
+			<hr />
+			
+			<h3>It's time you have been waiting for</h3>
+			
+			<p>Now, instead of sign in boxes you are seeing your name on the top and next to it there is a link Write a News. Click on that and start sharing.</p>
+			
+		</div>
+	</div>
+</div>
+{% endblock %}

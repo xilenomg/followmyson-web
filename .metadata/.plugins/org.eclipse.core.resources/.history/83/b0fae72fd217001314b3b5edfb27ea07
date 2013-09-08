@@ -1,0 +1,19 @@
+<?php
+if ( isset($_POST['user_id'])){
+	require_once("../_config/_config.php");
+	
+	$userDAO = new UserDAO();
+	$user = $userDAO->get(1);
+	
+	$userLocationDAO = new UserLocationDAO();
+	$userLocation = $userLocationDAO->getLast();
+	
+	echo "{user:{latitude:" + $userLocation->latitude +", longitude:" + $userLocation->longitude + "}}";
+}
+else{
+	header('HTTP/ 433 Reason Phrase As You Wish');
+	echo "error";
+}
+
+
+?>

@@ -1,0 +1,21 @@
+<?php
+require_once("../_config/_config.php");
+
+$categoryDAO = new CategoryDAO();
+$categories = $categoryDAO->getAllToMenu();
+
+$postDAO = new PostDAO();
+$postsTrending = $postDAO->getTrendingNow();
+
+
+
+# obrigatorio em todas as paginas
+$config['title'] = 'News from all the World';
+$pagina['config'] = $config;
+$pagina['categories'] = $categories;
+$pagina['postsTrending'] = $postsTrending;
+
+#renderizando
+$h2o = new h2o('../_templates/web/trending.html');
+echo $h2o->render($pagina);
+?>

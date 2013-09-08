@@ -1,0 +1,20 @@
+<?php
+require_once("../_config/_config.php");
+
+$categoryDAO = new CategoryDAO();
+$categories = $categoryDAO->getAllToMenu();
+
+$postDAO = new PostDAO();
+$postsByWorld = $postDAO->getPostByWorld();
+
+
+
+# obrigatorio em todas as paginas
+$config['title'] = 'Learn more how to become a global journalist';
+$pagina['config'] = $config;
+$pagina['categories'] = $categories;
+
+#renderizando
+$h2o = new h2o('../_templates/web/pageLearnMore.html');
+echo $h2o->render($pagina);
+?>

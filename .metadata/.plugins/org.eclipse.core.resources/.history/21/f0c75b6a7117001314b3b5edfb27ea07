@@ -1,0 +1,68 @@
+delimiter $$
+
+CREATE TABLE `Category` (
+  `category_id` int(20) NOT NULL AUTO_INCREMENT,
+  `category_name` varchar(100) NOT NULL,
+  `show_on_header` tinyint(1) NOT NULL DEFAULT '0',
+  `parent_id` int(20) DEFAULT NULL,
+  PRIMARY KEY (`category_id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8$$
+
+INSERT into Category(category_name, show_on_header) VALUES("Arts",1),
+("Books",1),
+("Business",1),
+("Education",1),
+("Health",1),
+("Jobs",1),
+("Music",1),
+("Opinion",1),
+("Photografy",1),
+("Politics",1),
+("Science",1),
+("Style",1),
+("Technology",1),
+("Television",1),
+("Travel",1),
+("Weather",1)$$
+
+delimiter $$
+
+CREATE TABLE `Post` (
+  `post_id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `image_name` varchar(44) DEFAULT '',
+  `legend` varchar(255) DEFAULT NULL,
+  `title` varchar(255) NOT NULL,
+  `post_text` text,
+  `registration_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `user_id` bigint(20) NOT NULL,
+  `views` mediumint(8) unsigned DEFAULT '0',
+  `latitude` double DEFAULT NULL,
+  `longitude` double DEFAULT NULL,
+  `category_id` int(11) DEFAULT NULL,
+  PRIMARY KEY (`post_id`),
+  KEY `user_id` (`user_id`),
+  KEY `fk_post_category` (`category_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8$$
+
+
+delimiter $$
+
+CREATE TABLE `User` (
+  `user_id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `user_name` varchar(50) NOT NULL DEFAULT '',
+  `user_email` varchar(75) NOT NULL DEFAULT '',
+  `user_password` varchar(40) NOT NULL DEFAULT '',
+  `last_login` datetime DEFAULT NULL,
+  `registration_date` datetime DEFAULT NULL,
+  `birthday` date DEFAULT NULL,
+  `hometown` varchar(100) DEFAULT NULL,
+  `current_city` varchar(100) DEFAULT NULL,
+  `mobile_phone` varchar(15) DEFAULT NULL,
+  `language` varchar(30) DEFAULT NULL,
+  `gender` char(1) DEFAULT NULL,
+  `user_login` varchar(30) NOT NULL DEFAULT '',
+  PRIMARY KEY (`user_id`),
+  UNIQUE KEY `email` (`user_email`),
+  UNIQUE KEY `user_login` (`user_login`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8$$
+

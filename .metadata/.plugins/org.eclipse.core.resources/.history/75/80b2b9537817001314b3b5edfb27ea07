@@ -1,0 +1,10 @@
+<?php
+class UserLocation extends DatabaseModel{
+	public $userlocation_id = null;
+	public $user_id = null;
+	public $latitude = null;
+	public $longitude = null;
+	
+	public $db_fields = array('user_id','user_name');
+}
+?>

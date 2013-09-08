@@ -1,0 +1,16 @@
+<!-- Adding gallery images. We use resized thumbnails here for better performance, but itÕs not necessary -->
+
+<div id="galleria">
+	{% for media in medias %}
+		{% if media.type == 'image' %}
+        <img 
+            src="{{media.media_name | post_image_url}}"
+            data-big="{{media.media_name | post_image_url}}"
+            data-title="{{post.title_general}}"
+            data-description="{{post.summary_general}}"
+        />
+        {% else %}
+        <a href="http://www.youtube.com/watch?v={{media.media_name}}"><img src="/_assets/images/video_small.jpg"></a>
+        {% endif %}
+    {% endfor %}
+</div>

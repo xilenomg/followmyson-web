@@ -1,0 +1,19 @@
+<?php
+require_once("../_config/_config.php");
+
+$categoryDAO = new CategoryDAO();
+$categories = $categoryDAO->getAllToMenu();
+
+
+# obrigatorio em todas as paginas
+$config['title'] = "Privacy Policy";
+$pagina['config'] = $config;
+$pagina['categories'] = $categories;
+
+$pageInfo['name'] = 'privacy_policy';
+$pagina['page'] = $pageInfo;
+
+#renderizando
+$h2o = new h2o('../_templates/web/privacy_policy.html');
+echo $h2o->render($pagina);
+?>

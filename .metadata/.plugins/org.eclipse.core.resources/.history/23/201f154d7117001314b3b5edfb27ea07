@@ -1,0 +1,30 @@
+<?php
+require_once("../_config/_config.php");
+
+$location = new Location();
+$location->getLocationByIp();
+
+if ( !isset($_COOKIE['rbi']) || $_COOKIE['rbi'] === false ){
+	
+	setcookie('cityName', $location->cityName, SESSION_TIME, SESSION_PATH);
+	setcookie('regionName', $location->regionName, SESSION_TIME, SESSION_PATH);
+	setcookie('countryName', $location->countryName, SESSION_TIME, SESSION_PATH);
+	setcookie('countryCode', $location->countryCode, SESSION_TIME, SESSION_PATH);
+	
+	//retrived by Ip
+	setcookie('rbi', true, SESSION_TIME, SESSION_PATH);
+}
+elseif ( !isset( $_COOKIE['cityName'] ) || trim($_COOKIE['cityName']) == ''){
+	$location->getDefaultLocation();
+	
+	setcookie('cityName', $location->cityName, SESSION_TIME, SESSION_PATH);
+	setcookie('regionName', $location->regionName, SESSION_TIME, SESSION_PATH);
+	setcookie('countryName', $location->countryName, SESSION_TIME, SESSION_PATH);
+	setcookie('countryCode', $location->countryCode, SESSION_TIME, SESSION_PATH);
+	
+	//retrived by Ip
+	setcookie('rbi', true, SESSION_TIME, SESSION_PATH);
+}
+
+Util::redirect('/');
+?>

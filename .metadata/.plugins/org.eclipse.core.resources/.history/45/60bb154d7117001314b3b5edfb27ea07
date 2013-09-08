@@ -1,0 +1,5 @@
+<?php
+require_once("../_config/_config.php");
+$sessionManager->logout();
+Util::redirect("/");
+?>

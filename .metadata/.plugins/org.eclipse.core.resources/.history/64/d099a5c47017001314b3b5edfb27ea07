@@ -1,0 +1,12 @@
+<?php
+ class PostInappropriateDAO extends DatabaseAccessObject{
+ 	
+ 	public $table_name = "Post_Inappropriate";
+ 	public $entity_name = "Post_Inappropriate";
+ 	
+ 	function PostInappropriateDAO(){
+ 		parent::__construct();
+ 	}
+ 	
+ }
+?>

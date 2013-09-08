@@ -1,0 +1,81 @@
+var FMS = FMS || {};
+
+FMS.mapsController = {
+	SAN_FRANCISCO: new google.maps.LatLng(37.77492950, -122.41941550),
+	map: null,
+	marker: null,
+	initialize: function(elementMap, markerPositionLatLng, markerDragendCallback, onCompleteCallback){
+		geocoder = new google.maps.Geocoder();
+		var latlng = typeof markerPositionLatLng == "undefined" || markerPositionLatLng == null ? this.SAN_FRANCISCO : markerPositionLatLng;
+		
+		var mapOptions = {
+			zoom: 17,
+			zoomControl: false,
+		    disableDefaultUI: true,
+			center: latlng,
+			scrollwheel: false,
+		    navigationControl: false,
+		    mapTypeControl: false,
+		    scaleControl: false,
+		    draggable: false,
+			mapTypeId: google.maps.MapTypeId.ROADMAP
+		}
+		
+		this.map = new google.maps.Map(elementMap, mapOptions);
+		
+		this.marker = new google.maps.Marker({
+		    map: this.map,
+		    position: latlng,
+		    draggable: false
+		});
+
+		
+		if ( typeof onCompleteCallback == "function") {
+			onCompleteCallback();
+		}
+	},
+	setMarkerLocation: function(latitude, longitude){
+		var newLatLng = new google.maps.LatLng(latitude, longitude);
+		this.marker.setPosition(newLatLng);
+	},
+	getLocationByAddress: function (address, callback) {
+		geocoder.geocode( { 'address': address}, function(results, status) {
+			if (status == google.maps.GeocoderStatus.OK) {
+				FMS.mapsController.map.setCenter(results[0].geometry.location);
+			    if (typeof Object.keys == 'function'){
+				    var length = function(x) { return Object.keys(x).length; };
+				}
+				else{
+				    var length = function() {};
+				}
+			
+				var location = {};      
+				for ( i = 0; i < results[0].address_components.length; ++i ) {
+				    var component = results[0].address_components[i];
+				    if (!location.country && component.types.indexOf("country") > -1){
+						location.country = component.long_name;
+						location.countryCode = component.short_name;
+					}else if (!location.postal_code && component.types.indexOf("postal_code") > -1){
+					    location.postal_code = component.long_name;
+					}else if (!location.city && component.types.indexOf("locality") > -1){
+					    location.city = component.long_name;
+					}else if (!location.region && component.types.indexOf("administrative_area_level_1") > -1){
+					    location.region = component.long_name;
+					}else if (!location.sublocality && component.types.indexOf("sublocality") > -1){
+					    location.sublocality = component.long_name;
+					}
+					
+					if ( results[0].geometry.location && (!location.lat || location.lat == "") ){
+						location.lat = results[0].geometry.location.lat();
+						location.lng = results[0].geometry.location.lng();
+					}
+				    
+				}
+				
+				if ( typeof callback == "function" ){
+					callback(location);
+				}
+			}
+	  });
+	}
+};

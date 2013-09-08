@@ -1,0 +1,31 @@
+<?php
+ class PostMediaDAO extends DatabaseAccessObject{
+ 	
+ 	public $table_name = "Post_Media";
+ 	public $entity_name = "PostMedia";
+ 	
+ 	function PostMediaDAO(){
+ 		parent::__construct();
+ 	}
+ 	
+ 	function getMediasByPostId($post_id){
+ 		$query = 'SELECT * FROM '.$this->table_name.' WHERE post_id = "'.$post_id.'"';
+ 		$result = $this->QExec($query);
+ 		$medias = array();
+ 		while ( $media = mysql_fetch_object($result, $this->entity_name)){
+ 			$medias[] = $media;
+ 		}
+ 		return $medias;
+ 	}
+ 	
+ 	function getMainMediaByPostId($post_id){
+ 		$query = 'SELECT * FROM '.$this->table_name.' WHERE post_id = "'.$post_id.'" AND type="image" ORDER BY post_media_id ASC LIMIT 1';
+ 		$result = $this->QExec($query);
+ 		if ( mysql_num_rows($result) > 0) {
+ 			return mysql_fetch_object($result, $this->entity_name);
+ 		}
+ 		return null;
+ 	}
+ 	
+ }
+?>

@@ -1,0 +1,42 @@
+var YOUJOUR = YOUJOUR || {};
+
+YOUJOUR.userSignUpFormController = (function() {
+	var self = {}; 
+	
+	self.initialize = function(){
+		self.addListeners();
+	};
+	
+	self.addListeners = function(){
+		$("#userSignUpFormSubmit").click(function(){
+			var validation = self.doFormValidation();
+			if ( !validation ){
+				$(".errorMessage").show();
+				return false;
+			}
+			
+			$(".errorMessage").hide();
+			return true;
+		});
+	};
+	
+	self.doFormValidation = function(){
+		var user_name_empty = $("input[name='user_name']").val() == "";
+		var user_email_empty = $("input[name='user_email']").val() == "";
+		var user_password_empty = $("input[name='user_password']").val() == "";
+		var user_confirm_password_empty = $("input[name='user_confirm_password']").val() == "";
+		
+		if (  user_name_empty || user_email_empty || user_password_empty || user_confirm_password_empty ){
+			return false;
+		}
+		
+		return true;
+		
+	};
+	
+	return self;
+}());
+
+$(document).ready(function(){
+	YOUJOUR.userSignUpFormController.initialize();
+});

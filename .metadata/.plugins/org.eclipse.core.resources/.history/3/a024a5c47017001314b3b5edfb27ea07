@@ -1,0 +1,17 @@
+<?php
+ class PostTagDAO extends DatabaseAccessObject{
+ 	
+ 	public $table_name = "Post_Tag";
+ 	public $entity_name = "PostTag";
+ 	
+ 	function TagDAO(){
+ 		parent::__construct();
+ 	}
+ 	
+ 	function deleteAllTagsByPostId($post_id){
+ 		$query = 'DELETE FROM '.$this->table_name .' WHERE post_id = "'.$post_id.'"';
+ 		$this->QExec($query);
+ 	}
+ 	
+ }
+?>

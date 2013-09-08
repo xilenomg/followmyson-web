@@ -1,0 +1,10 @@
+<?php
+ class PostView extends DatabaseModel{
+	public $post_view_id = null;
+	public $post_id = null;
+	public $date_view = null;
+	
+	public $db_fields = array('post_view_id', 'post_id','date_view',);
+	
+ }
+?>

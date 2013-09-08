@@ -1,0 +1,54 @@
+<?php
+require_once("../_config/_config.php");
+
+$categoryDAO = new CategoryDAO();
+$categories = $categoryDAO->getAllToMenu();
+
+$postDAO = new PostDAO();
+$userDAO = new UserDAO();
+$postVoteDAO = new PostVoteDAO();
+$postViewDAO = new PostViewDAO();
+$tagDAO = new TagDAO();
+
+$post  = $postDAO->get($_GET['post_id']);
+$post->votes = $postVoteDAO->getVotesByPost($post->post_id);
+
+$user = $userDAO->get($post->user_id);
+if ( $post == null || $post->activated != 1){
+	Util::redirect('/');
+}
+
+$postMediaDAO = new PostMediaDAO();
+$post->medias = $postMediaDAO->getMediasByPostId($post->post_id);
+
+$category = $categoryDAO->get($post->category_id);
+$tags = $tagDAO->getTagsByPostId($post->post_id);
+$tagsArray = array();
+if ( sizeof($tagsArray) > 0){
+	foreach ( $tags as $key => $value){
+		$tagsArray[] = $value->tag;
+	}
+}
+$post->tags = $tagsArray;
+
+$postView = new PostView();
+$postView->post_id = $post->post_id;
+$postView->date_view = date("Y/m/d H:i:s");
+$postViewDAO->create($postView);
+
+
+$pageInfo['name'] = 'news';
+$pagina['page'] = $pageInfo;
+
+# obrigatorio em todas as paginas
+$config['title'] = $post->title_inner;
+$pagina['config'] = $config;
+$pagina['categories'] = $categories;
+$pagina['category'] = $category;
+$pagina['post'] = $post;
+$pagina['user'] = $user;
+
+#renderizando
+$h2o = new h2o('../_templates/web/post.html');
+echo $h2o->render($pagina);
+?>

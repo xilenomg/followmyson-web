@@ -1,0 +1,19 @@
+<?php
+require_once("../_config/_config.php");
+
+$categoryDAO = new CategoryDAO();
+$categories = $categoryDAO->getAllToMenu();
+
+
+# obrigatorio em todas as paginas
+$config['title'] = "Terms & Conditions";
+$pagina['config'] = $config;
+$pagina['categories'] = $categories;
+
+$pageInfo['name'] = 'terms_of_privacy';
+$pagina['page'] = $pageInfo;
+
+#renderizando
+$h2o = new h2o('../_templates/web/terms_and_conditions.html');
+echo $h2o->render($pagina);
+?>

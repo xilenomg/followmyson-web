@@ -1,0 +1,48 @@
+<?php
+require_once("../_config/_config.php");
+error_reporting(E_ERROR | E_WARNING | E_PARSE | E_NOTICE);
+ini_set('display_errors', 'On');
+
+$postDAO = new PostDAO();
+
+$city = '';//isset($_GET['city']) ? $_GET['city'] : '';
+$region = '';//isset($_GET['region']) ? $_GET['region'] : '';
+$country = '';//isset($_GET['country']) ? $_GET['country'] : '';
+
+$start = isset($_GET['start']) ? $_GET['start'] : 0;
+$limit = isset($_GET['limit']) ? $_GET['limit'] : 20;
+
+if ( isset($_GET['category_id']) && trim($_GET['category_id']) != '' ){
+	$news = $postDAO->getPostByCategory($_GET['category_id'], $city, $region, $country, $start, $limit);
+	if ( sizeof($news) < $limit && $city != ''){
+		$news = array_merge($news, $postDAO->getPostByCategory($_GET['category_id'], '', $region, $country, $start, $limit));
+	}
+	
+	if ( sizeof($news) < $limit && $region != ''){
+		$news = array_merge($news, $postDAO->getPostByCategory($_GET['category_id'], '', '', $country, $start, $limit));
+	}
+
+	if ( sizeof($news) < $limit && $country != ''){
+		$news = array_merge($news, $postDAO->getPostByCategory($_GET['category_id'], '', '', '', $start, $limit));
+	}
+}
+else{
+	$news = $postDAO->getLatestNewsByLocation($city, $region, $country, $start, $limit);
+	
+	if ( sizeof($news) < $limit && $city != ''){
+		$news = $postDAO->getLatestNewsByLocation('', $region, $country, $start, $limit);
+	}
+	
+	if ( sizeof($news) < $limit && $region != ''){
+		$news = $postDAO->getLatestNewsByLocation('', '', $country, $start, $limit);
+	}
+	
+	if ( sizeof($news) < $limit && $country != ''){
+		$news = $postDAO->getLatestNewsByLocation('', '', '', $start, $limit);
+	}
+}
+
+$news = $postDAO->removeDuplicatePostFromArray($news);
+usort($news, array('Post', 'sortNewsByRegistrationDate'));
+
+echo json_encode(array('news' => $news));

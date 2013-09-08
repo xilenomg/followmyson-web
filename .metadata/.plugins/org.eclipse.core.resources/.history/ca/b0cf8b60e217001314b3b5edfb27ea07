@@ -1,0 +1,32 @@
+var FMS = FMS || {};
+
+FMS.UserLocation = {
+		id : 1,
+		
+};
+
+FMS.UserLocation = function(){
+	
+	
+	this.getUserLocation = function(){
+		$.ajax("/getLocation.php",{
+			dataType: "json",
+			type: "POST",
+			data:{"user_id" : "1"}
+		}).done(function(data){
+			FMS.mapsController.setMarkerLocation(data.latitude, data.longitude);
+		});
+	}
+	
+	this.startLocation = function(){	
+		this.getUserLocation();
+		setInterval(function(){
+			this.getUserLocation();
+		},5000);
+	}
+};
+
+$(document).ready(function(){
+	var user = new FMS.UserLocation();
+	user.startLocation();
+});

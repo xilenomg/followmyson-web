@@ -1,0 +1,125 @@
+var YOUJOUR = YOUJOUR || {};
+
+YOUJOUR.postCreateFormController = (function() {
+	var self = {}; 
+	
+	self.currentLocation = null;
+	
+	self.initialize = function(){
+		YOUJOUR.mapsController.initialize(document.getElementById('map-canvas'), null, YOUJOUR.postCreateFormController.dragendCallback, YOUJOUR.postCreateFormController.onCompleteCallback);
+		self.addListeners();
+	};
+	
+	self.addListeners = function(){
+		$("#postCreateFormSubmit").click(function(){
+			var validation = self.doFormValidation();
+			if ( !validation ){
+				$(".errorMessage").show();
+				return false;
+			}
+			
+			$(".errorMessage").hide();
+			return true;
+		});
+	};
+	
+	self.onCompleteCallback = function(){
+		if ( YOUJOUR.postCreateFormController.currentLocation ){
+			YOUJOUR.mapsController.getLocationByAddress(YOUJOUR.postCreateFormController.currentLocation, function(location){
+				
+				if ( typeof location != "undefined" && location.city && location.city != '' ){
+					
+					$(".city").html(location.city);
+					$(".region").html(location.region);
+					$(".country").html(location.country);
+					$("#city").val(location.city);
+					$("#region").val(location.region);
+					$("#country").val(location.country);
+					if ( YOUJOUR.mapsController.marker ){
+						var latlng = new google.maps.LatLng(location.lat, location.lng);
+						YOUJOUR.mapsController.marker.setPosition(latlng);
+					}
+	
+				} 
+				else{
+					alert("We're missing city name. Try again being more specific.");
+				}
+				
+			});
+		}
+	};
+	
+	self.dragendCallback = function ( marker, event){
+		var point = marker.getPosition();
+		//map.panTo(point);
+		
+		YOUJOUR.mapsController.getLocationByAddress(point.lat() + ", " + point.lng(), function(location){
+		
+			if ( typeof location != "undefined" && location.city && location.city != '' ){
+				
+				$(".city").html(location.city);
+				$(".region").html(location.region);
+				$(".country").html(location.country);
+				$("#city").val(location.city);
+				$("#region").val(location.region);
+				$("#country").val(location.country);
+				if ( YOUJOUR.mapsController.marker ){
+					var latlng = new google.maps.LatLng(location.lat, location.lng);
+					YOUJOUR.mapsController.marker.setPosition(latlng);
+				}
+			} 
+			else{
+				alert("We're missing city name. Try again being more specific.");
+			}
+			
+		});	
+	};
+	
+	self.codeAddress = function(){
+		var address = document.getElementById('address').value;
+		var location = YOUJOUR.mapsController.getLocationByAddress(address, function(location){
+			if ( location.city && location.city != '' ){
+				$(".city").html(location.city);
+				$(".region").html(location.region);
+				$(".country").html(location.country);
+				$("#city").val(location.city);
+				$("#region").val(location.region);
+				$("#country").val(location.country);
+				if ( YOUJOUR.mapsController.marker ){
+					var latlng = new google.maps.LatLng(location.lat, location.lng);
+					YOUJOUR.mapsController.marker.setPosition(latlng);
+				}
+			} 
+			else{
+				alert("We're missing city name. Try again being more specific.");
+			}
+		});
+	};
+	
+	self.doFormValidation = function(){
+		var title_general_empty = $("input[name='title_general']").val() == "";
+		var title_inner_empty = $("input[name='title_inner']").val() == "";
+		
+		var summary_general_empty = $("input[name='summary_general']").val() == "";
+		var summary_inner_empty = $("input[name='summary_inner']").val() == "";
+		
+		var category = $("select[name='category']").val() == "";
+		
+		var post_text = $("select[name='post_text']").val() == "";
+		
+		var city_empty = $("input[name='city']").val() == "";
+		var country_empty = $("input[name='country']").val() == "";
+		
+		if ( (title_general_empty && title_inner_empty) || (summary_general_empty && summary_inner_empty) || category 
+				|| post_text || city_empty || country_empty ){
+			return false;
+		}
+		
+		return true;
+		
+	};
+	
+	return self;
+}());
+
+google.maps.event.addDomListener(window, 'load', YOUJOUR.postCreateFormController.initialize);

@@ -1,0 +1,32 @@
+<?php
+ class UserDAO extends DatabaseAccessObject{
+ 	
+ 	public $table_name = "User";
+ 	public $entity_name = "User";
+ 	
+ 	function UserDAO(){
+ 		parent::__construct();
+ 	}
+ 	
+ 	public function checkCredentials($email, $password, $passwordEncrypted = true){
+ 		if ( !$passwordEncrypted ){
+ 			$password = sha1($password);
+ 		}
+ 		$query = 'SELECT * FROM ' . $this->table_name . ' WHERE user_email="'.$email.'" and user_password="'.$password.'" LIMIT 1';
+ 		$exec = $this->QExec($query);
+ 		$user = null;
+ 		if ( mysql_num_rows($exec) > 0 ){
+ 			$user = mysql_fetch_object($exec, $this->entity_name);
+ 		}
+ 		return $user;
+ 	}
+ 	
+ 	function getByEmail($user_email){
+ 		$query = 'SELECT * FROM '.$this->table_name.' WHERE user_email = "'.$user_email.'" LIMIT 1';
+ 		$exec = $this->QExec($query);
+ 		$obj = mysql_fetch_object($exec, $this->entity_name);
+ 		return $obj;
+ 	}
+ 	
+ }
+?>

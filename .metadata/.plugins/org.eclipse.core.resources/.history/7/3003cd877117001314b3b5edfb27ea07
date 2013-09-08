@@ -1,0 +1,79 @@
+<?php
+require_once("_config/_config.php");
+
+$categoryDAO = new CategoryDAO();
+$categories = $categoryDAO->getAllToMenu();
+
+$postDAO = new PostDAO();
+
+//Posts Daily
+$postsDaily = $postDAO->getPostByCategory(18, $cookieCityName, $cookieRegionName, $cookieCountryName, 0, 7);
+if ( sizeof($postsDaily) < 7 && $cookieRegionName != ''){
+	$postsDaily = array_merge($postsDaily, $postDAO->getPostByCategory(18, '', '', $cookieCountryName, 0, 7));
+	if ( sizeof($postsDaily) < 7 && $cookieCountryName != ''){
+		$postsDaily = array_merge($postsDaily, $postDAO->getPostByCategory(18, '', '', '', 0, 7));
+	}
+}
+
+$postsDaily = $postDAO->removeDuplicatePostFromArray($postsDaily);
+usort($postsDaily, array('Post', 'sortNewsByRegistrationDate'));
+
+//Posts Trending Now
+$postsTrendingNow = $postDAO->getTrendingNow($cookieCityName, $cookieRegionName, $cookieCountryName, 0, 3);
+if ( sizeof($postsTrendingNow) < 3 && $cookieRegionName != ''){
+	$postsTrendingNow = array_merge($postsTrendingNow, $postDAO->getTrendingNow('', '', $cookieCountryName, 0, 5));
+	if ( sizeof($postsTrendingNow) < 3 && $cookieCountryName != ''){
+		$postsTrendingNow = array_merge($postsTrendingNow, $postDAO->getTrendingNow('', '', '', 0, 5));
+	}
+}
+
+$postsTrendingNow = $postDAO->removeDuplicatePostFromArray($postsTrendingNow);
+usort($postsTrendingNow, array('Post', 'sortNewsByRegistrationDate'));
+
+if ( sizeof($postsTrendingNow) < 3 ){
+	$postsTrendingNow = array_merge($postsTrendingNow, $postDAO->getPostMostViewedWorld(24));
+}
+
+
+
+//postsBusiness
+$postsBusiness = $postDAO->getPostByCategory(3,$cookieCityName, $cookieRegionName, $cookieCountryName,  0, 5);
+if ( sizeof($postsBusiness) < 3 && $cookieRegionName != ''){	
+	$postsBusiness = array_merge($postsBusiness,$postDAO->getPostByCategory(3, '', '', $cookieCountryName, 0, 5));
+	if ( sizeof($postsBusiness) < 3 && $cookieCountryName != ''){
+		$postsBusiness = array_merge($postsBusiness,$postDAO->getPostByCategory(3, '', '', '', 0, 5));
+	}
+}
+
+usort($postsBusiness, array('Post', 'sortNewsByRegistrationDate'));
+
+//postsSports
+$postsSports = $postDAO->getPostByCategory(17,$cookieCityName, $cookieRegionName, $cookieCountryName,  0, 5);
+if ( sizeof($postsSports) < 3 && $cookieRegionName != ''){
+	$postsSports = array_merge($postsSports,$postDAO->getPostByCategory(17, '', '', $cookieCountryName, 0, 5));
+	if ( sizeof($postsSports) < 3 && $cookieCountryName != ''){
+		$postsSports = array_merge($postsSports,$postDAO->getPostByCategory(17, '', '', '', 0, 5));
+	}
+}
+
+usort($postsSports, array('Post', 'sortNewsByRegistrationDate'));
+
+//rendering
+# obrigatorio em todas as paginas
+$config['title'] = "";
+$pagina['config'] = $config;
+$pagina['categories'] = $categories;
+
+//new
+$pagina['postsDaily'] = $postsDaily;
+$pagina['postsBusiness'] = $postsBusiness;
+$pagina['postsSports'] = $postsSports;
+$pagina['postsTrendingNow'] = $postsTrendingNow;
+
+$pageInfo['name'] = 'index';
+$pagina['page'] = $pageInfo;
+
+#renderizando
+$h2o = new h2o('_templates/web/index.html');
+echo $h2o->render($pagina);
+?>

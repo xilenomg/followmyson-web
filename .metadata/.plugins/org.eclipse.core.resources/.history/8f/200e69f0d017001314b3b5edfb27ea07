@@ -1,0 +1,16 @@
+var FMS = FMS || {};
+
+FMS.UserLocation = function(){
+	
+	
+	this.getUserLocation = function(){
+		console.log(this.user);
+	}
+};
+
+$(document).ready(function(){
+	var user = new FMS.UserLocation();
+	setTimeInterval(function(){
+		user.getUserLocation();
+	},1000);
+});

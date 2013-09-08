@@ -1,0 +1,73 @@
+RewriteEngine On
+
+#categories
+RewriteRule ^category/([0-9]+)$ /_controller/newsCategoryController.php?category_id=$1&page=1 [QSA,L]
+RewriteRule ^category/([0-9]+)/([0-9]+)$ /_controller/newsCategoryController.php?category_id=$1&page=$2 [QSA,L]
+
+#user
+RewriteRule ^user/login?$ /_controller/userLoginController.php [QSA,L]
+RewriteRule ^user/([0-9]+)$ /_controller/userController.php?user_id=$1 [QSA,L]
+RewriteRule ^signout?$ /_controller/userSignoutController.php [QSA,L]
+RewriteRule ^signup?$ /_controller/userSignUpController.php [QSA,L]
+
+#facebook
+RewriteRule ^user/facebook/logout$ /_controller/userFacebookLogoutController.php?user_id=$1 [QSA,L]
+RewriteRule ^user/facebook/login$ /_controller/userFacebookLoginController.php?user_id=$1 [QSA,L]
+
+#news
+RewriteRule ^news/([0-9]+)$ /_controller/newsController.php?post_id=$1 [QSA,L]
+RewriteRule ^news/edit/([0-9]+)$ /_controller/newsEditController.php?post_id=$1&afterpost=0 [QSA,L]
+RewriteRule ^news/edit/afterpost/([0-9]+)$ /_controller/newsEditController.php?post_id=$1&afterpost=1 [QSA,L]
+RewriteRule ^news/edit/afteredit/([0-9]+)$ /_controller/newsEditController.php?post_id=$1&afterpost=2 [QSA,L]
+RewriteRule ^news/edit/addMedias/([0-9]+)$ /_controller/newsAddMediaController.php?post_id=$1 [QSA,L]
+RewriteRule ^news/edit/sendMedias/([0-9]+)$ /_controller/newsSendMediaController.php?post_id=$1 [QSA,L]
+RewriteRule ^news/edit/deleteMedia$ /_controller/newsDeleteMediaController.php [QSA,L]
+RewriteRule ^news/delete/([0-9]+)$ /_controller/newsDeleteController.php?post_id=$1 [QSA,L]
+RewriteRule ^news/write$ /_controller/newsCreateController.php [QSA,L]
+
+#news vote
+RewriteRule ^news/([0-9]+)/up$ /_controller/newsVoteController.php?post_id=$1&vote_type=1 [QSA,L]
+RewriteRule ^news/([0-9]+)/down$ /_controller/newsVoteController.php?post_id=$1&vote_type=-1 [QSA,L]
+
+#news inappropriate
+RewriteRule ^news/([0-9]+)/inappropriate$ /_controller/newsInappropriateController.php?post_id=$1 [QSA,L]
+
+#news by region (city, country, world)
+RewriteRule ^city/([^/]+)/([^/]+)/([^/]+)$ /_controller/newsCityController.php?country=$1&region=$2&city=$3 [QSA,L]
+RewriteRule ^country/([^/]+)$ /_controller/newsCountryController.php?country=$1 [QSA,L]
+RewriteRule ^world$ /_controller/newsWorldController.php?page=1 [QSA,L]
+RewriteRule ^world/([0-9]+)$ /_controller/newsWorldController.php?page=$1 [QSA,L]
+
+#trending
+RewriteRule ^trending$ /_controller/newsTrendingController.php [QSA,L]
+
+#chooseRegion
+RewriteRule ^chooseRegion$ /_controller/chooseRegionController.php [QSA,L]
+
+#location
+RewriteRule ^location/get$ /_controller/locationController.php [QSA,L]
+
+#about
+RewriteRule ^about$ /_controller/aboutController.php [QSA,L]
+
+#terms and conditions
+RewriteRule ^terms_and_conditions$ /_controller/termsConditionsController.php [QSA,L]
+
+#privacy policy
+RewriteRule ^privacy_policy$ /_controller/privacyPolicyController.php [QSA,L]
+
+#contact
+RewriteRule ^contact/send_a_message /_controller/contactSendMessageController.php [QSA,L]
+RewriteRule ^contact/support /_controller/contactController.php [QSA,L]
+
+#pages
+RewriteRule ^pages/learn_more /_controller/pageLearnMoreController.php [QSA,L]
+
+#api
+RewriteRule ^([^/]+).json$ /_api/$1.php [QSA,L]
+
+#RSS
+RewriteRule ^([^/]+).xml$ /_rss/$1.php [QSA,L]
+
+#Handling error page
+ErrorDocument 404 /_controller/pageErrorController.php

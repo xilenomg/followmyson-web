@@ -1,0 +1,81 @@
+var YOUJOUR = YOUJOUR || {};
+
+YOUJOUR.chooseRegionController = {
+	initialize: function(){
+		YOUJOUR.mapsController.initialize(document.getElementById('map-canvas'), null, YOUJOUR.chooseRegionController.dragendCallback, YOUJOUR.chooseRegionController.onCompleteCallback);		
+	},
+	onCompleteCallback: function(){
+		if ( YOUJOUR.chooseRegionController.currentLocation ){
+			YOUJOUR.mapsController.getLocationByAddress(YOUJOUR.chooseRegionController.currentLocation, function(location){
+				
+				if ( typeof location != "undefined" && location.city && location.city != '' ){
+					
+					$("#city").val(location.city);
+					$("#region").val(location.region);
+					$("#country").val(location.country);
+					$("#countryCode").val(location.countryCode);
+					$(".city").html(location.city);
+					$(".region").html(location.region);
+					$(".country").html(location.country);
+					if ( YOUJOUR.mapsController.marker ){
+						var latlng = new google.maps.LatLng(location.lat, location.lng);
+						YOUJOUR.mapsController.marker.setPosition(latlng);
+					}
+	
+				} 
+				else{
+					alert("We're missing city name. Try again being more specific.");
+				}
+				
+			});
+		}
+	},
+	dragendCallback: function ( marker, event){
+		var point = marker.getPosition();
+		//map.panTo(point);
+		
+		YOUJOUR.mapsController.getLocationByAddress(point.lat() + ", " + point.lng(), function(location){
+		
+			if ( typeof location != "undefined" && location.city && location.city != '' ){
+				
+				$("#city").val(location.city);
+				$("#region").val(location.region);
+				$("#country").val(location.country);
+				$("#countryCode").val(location.countryCode);
+				$(".city").html(location.city);
+				$(".region").html(location.region);
+				$(".country").html(location.country);
+				if ( YOUJOUR.mapsController.marker ){
+					var latlng = new google.maps.LatLng(location.lat, location.lng);
+					YOUJOUR.mapsController.marker.setPosition(latlng);
+				}
+			} 
+			else{
+				alert("We're missing city name. Try again being more specific.");
+			}
+			
+		});	
+	},
+	codeAddress: function(){
+		var address = document.getElementById('address').value;
+		var location = YOUJOUR.mapsController.getLocationByAddress(address, function(location){
+			if ( location.city && location.city != '' ){
+				$(".city").html(location.city);
+				$(".region").html(location.region);
+				$(".country").html(location.country);
+				$("#city").val(location.city);
+				$("#region").val(location.region);
+				$("#country").val(location.country);
+				if ( YOUJOUR.mapsController.marker ){
+					var latlng = new google.maps.LatLng(location.lat, location.lng);
+					YOUJOUR.mapsController.marker.setPosition(latlng);
+				}
+			} 
+			else{
+				alert("We're missing city name. Try again being more specific.");
+			}
+		});
+	}
+}
+
+google.maps.event.addDomListener(window, 'load', YOUJOUR.chooseRegionController.initialize);

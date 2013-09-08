@@ -1,0 +1,22 @@
+<?php
+require_once("../_config/_config.php");
+
+$categoryDAO = new CategoryDAO();
+$categories = $categoryDAO->getAllToMenu();
+
+$postDAO = new PostDAO();
+$postsByCountry = $postDAO->getPostByCountry($_GET['country']);
+
+
+
+# obrigatorio em todas as paginas
+$config['title'] = 'News from ' . $_GET['country'];
+$pagina['newsLocation'] = array('country' => $_GET['country']); 
+$pagina['config'] = $config;
+$pagina['categories'] = $categories;
+$pagina['postsByCountry'] = $postsByCountry;
+
+#renderizando
+$h2o = new h2o('../_templates/web/newsCountry.html');
+echo $h2o->render($pagina);
+?>

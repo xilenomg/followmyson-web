@@ -1,0 +1,6 @@
+<?php
+class PaginationPage{
+	public $page_num = null;
+	public $page_link = null;
+	public $active = false;
+}

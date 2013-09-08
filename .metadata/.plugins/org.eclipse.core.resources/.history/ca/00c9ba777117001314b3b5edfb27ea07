@@ -1,0 +1,32 @@
+{% extends 'base.html' %} 
+
+{% block conteudo %}
+<div class="postsArea row">
+
+	<div class="span12">
+		<ul class="breadcrumb">
+			<li><a href="/">Home</a> <span class="divider">/</span></li>
+			<li class="active">{{category.category_name}}</li>
+			{% if pagination.current_page > 1 %}
+			<li class="active"><span class="divider">/</span>Page {{pagination.current_page}}</li>
+			{% endif %}
+		</ul>
+		<div class="row">
+			{% if postsByCategory.length > 0 %}
+				{% for key, post in postsByCategory %}
+				<div class="span3">
+					{% include '_templates/components/category_news.html' %}
+				</div>
+				{% endfor %}
+			{% else %}
+				<div class="alert alert-block span5">No results found for this Category: {{category.category_name}}</div>
+			{% endif %}
+		</div>
+	</div>
+
+</div>
+
+{% include '_templates/components/pagination.html' %}
+
+
+{% endblock %}

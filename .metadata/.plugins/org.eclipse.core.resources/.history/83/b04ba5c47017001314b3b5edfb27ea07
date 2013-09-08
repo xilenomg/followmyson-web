@@ -1,0 +1,10 @@
+<?php
+ class PostTag extends DatabaseModel{
+	public $post_tag_id = null;
+	public $post_id = null;
+	public $tag_id = null;
+	
+	public $db_fields = array('post_tag_id', 'tag_id','post_id');
+	
+ }
+?>

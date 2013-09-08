@@ -1,0 +1,3 @@
+User-agent: *
+Disallow: /_administrator
+Sitemap: http://www.youjour.com

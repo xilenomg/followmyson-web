@@ -1,0 +1,14 @@
+<div class="indexNews">
+	<div class="imageArea">
+		{% if post.main_media.media_name %}
+		<a href="/news/{{post.post_id}}" class=""> 
+			<img src="{{post.main_media.media_name | post_image_url}}" alt="{% if post.title_general %}{{post.title_general}}{% else %}{{post.title_inner | truncate }}{% endif %}">
+		</a>
+		{% else %}
+			<div class="noimage"></div>
+		{% endif %}
+		<div class="newsTitle">
+			<a href="/news/{{post.post_id}}" class="white">{% if post.title_general %}{{post.title_general}}{% else %}{{post.title_inner | truncate }}{% endif %}</a>
+		</div>
+	</div>
+</div>
